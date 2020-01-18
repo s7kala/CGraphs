@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -MMD -g
 EXEC = client
-OBJECTS = main.o graph.o graphimpl.o
+OBJECTS = test_client.o graph.o graphimpl.o
 DEPENDS = ${OBJECTS:.o=.d}
 
 ${EXEC}: ${OBJECTS}

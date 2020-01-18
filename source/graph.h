@@ -12,8 +12,8 @@ public:
     bool is_connected();
     bool is_bipartite();
     bool is_path(std::string v1, std::string v2);
-    friend std::istream& operator>>(std::istream &, Graph&);
-    friend std::ostream& operator<<(std::ostream &, const Graph&);
+    friend std::istream& operator>>(std::istream&, Graph&);
+    friend std::ostream& operator<<(std::ostream&, const Graph&);
     Graph();
     ~Graph();
 private:

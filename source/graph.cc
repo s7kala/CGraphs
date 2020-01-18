@@ -7,7 +7,7 @@ Graph::Graph(): pImpl{std::make_unique<GraphImpl>()} {}
 Graph::~Graph() = default;
 
 void Graph::print_properties(std::ostream &out) {
-
+    pImpl->print_properties(out);
 }
 
 bool Graph::is_bipartite() {

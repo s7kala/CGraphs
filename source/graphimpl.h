@@ -33,19 +33,23 @@ struct GraphImpl {
     std::vector<Vertex> V;              // vertex set
     std::vector<Edge> E;                // edge set
     std::map<Vertex, int> vertex_degrees;
-    int vertices = 0, edges = 0;
-    bool planar, bipartite, has_perfect_matching, connected;
     std::vector<Vertex> min_cover;
     std::vector<Edge> max_matching;
-
+    // -1 for not set, 0 for false, 1 for true
+    int planar = -1, bipartite = -1, connected = -1, has_perfect_matching = -1;
     // methods
     bool is_bipartite();
     bool is_planar();
     bool is_connected();
     bool is_path(Vertex v1, Vertex v2);
+    void print_properties(std::ostream&);
 private:
     bool path_exists(int x_location, Vertex y, std::vector<Vertex>& visited);
     int get_location(Vertex x);
+    void set_planar();
+    void set_bipartite();
+    void set_connected();
+    void set_has_perfect_matching();
 
 };
 

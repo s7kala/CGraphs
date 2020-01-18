@@ -45,7 +45,21 @@ std::ostream& operator<<(std::ostream& out, const GraphImpl& gp) {
     return out;
 }
 
+void GraphImpl::print_properties(std::ostream& out) {
+    out << *this;
+    out << "Degree sequence: ";
+    for(auto &it : vertex_degrees)
+        out << it.second << ' ';
+    out << '\n';
+    out << "The graph is ";
+    out << (is_planar() ? "planar, " : "not planar, ");
+    out << (is_connected() ? "connected, " : "not connected, ");
+    out << (is_bipartite() ? "bipartite." : "not bipartite.");
+    out << '\n';
+}
+
 void input_adjacency_list(std::istream& in, GraphImpl& gp) {
+    // initialize vertex set, edge set and degree set as well
     Vertex vertex, neighbour;
     std::vector<Vertex> vertex_set;
     std::vector<Edge> edge_set;
@@ -65,14 +79,12 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
                     // if edge is not already in edge set
                     if(std::find(edge_set.begin(), edge_set.end(), e) == edge_set.end()) {
                         edge_set.emplace_back(e);
-                        gp.edges++;
                     }
                     degree++;
                 }
             }
             vertex.degree = degree;
             vertex_set.emplace_back(vertex);
-            gp.vertices++;
             gp.vertex_degrees.insert({vertex, degree});
             std::pair<Vertex, std::vector<Vertex>> p(vertex, row);
             gp.G.emplace_back(p); 
@@ -99,7 +111,9 @@ int GraphImpl::get_location(Vertex x) {
     return location - 1;
 }
 
+// TO-DO
 bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visited) {
+    /*
   //  if(x_location == -1) return false;
     for(auto &it : G.at(x_location).second) {
         // if vertex hasn't already been visited
@@ -109,9 +123,11 @@ bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visit
             bool b = path_exists(get_location(it), y, visited);
         }
     }
+    */
     return false;
 }
 
+// TO-DO
 bool GraphImpl::is_path(Vertex x, Vertex y) {
     int x_location = get_location(x);
     int y_location = get_location(y);
@@ -124,24 +140,43 @@ bool GraphImpl::is_path(Vertex x, Vertex y) {
     return false;
 }
 
-bool GraphImpl::is_connected() {
+// TO-DO
+void GraphImpl::set_connected() {
     int vsize = V.size();
     for(int i = 0; i < vsize; ++i) {
         for(int j = i + 1; j < vsize; ++j) {
             if(!is_path(V.at(i), V.at(j))) {
                 std::cout << "There is no path from " << V.at(i)
                           << " to " << V.at(j) << std::endl;
-                return false;
+                connected = 0;
+                return;
             }
         }
-    }    
-    return true;
+    }
+    connected = 1;
+}
+
+// TO-DO
+void GraphImpl::set_bipartite() {
+
+}
+
+// TO-DO
+void GraphImpl::set_planar() {
+
+}
+
+bool GraphImpl::is_connected() {
+    if(connected < 0) set_connected();
+    return (connected == 1);
 }
 
 bool GraphImpl::is_bipartite() {
-    return true;
+    if(bipartite < 0) set_bipartite();
+    return (bipartite == 1);
 }
 
 bool GraphImpl::is_planar() {
-    return true;
+    if(planar < 0) set_planar();
+    return (planar == 1);
 }
