@@ -131,7 +131,7 @@ bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visit
 bool GraphImpl::is_path(Vertex x, Vertex y) {
     int x_location = get_location(x);
     int y_location = get_location(y);
-    if(x_location != -1 && y_location != -1) {
+    if(x_location != -1 && y_location != -1) {  // both vertices exist in the graph
         std::vector<Vertex> visited;
         visited.emplace_back(x);
         std::cout << "Finding path from " << x << " to " << y << '\n';
@@ -167,16 +167,19 @@ void GraphImpl::set_planar() {
 }
 
 bool GraphImpl::is_connected() {
+    // if connected is not set then set connected
     if(connected < 0) set_connected();
     return (connected == 1);
 }
 
 bool GraphImpl::is_bipartite() {
+    // if bipartite is not set then set bipartite
     if(bipartite < 0) set_bipartite();
     return (bipartite == 1);
 }
 
 bool GraphImpl::is_planar() {
+    // if planar is not set then set planar
     if(planar < 0) set_planar();
     return (planar == 1);
 }
