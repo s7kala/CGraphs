@@ -114,9 +114,9 @@ int GraphImpl::get_location(Vertex x) {
 }
 
 // TO-DO
+// find if there is a path from x to y, assuming that both x and y exist in the graph
 bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visited) {
-    /*
-  //  if(x_location == -1) return false;
+    // search in neighbours of x
     for(auto &it : G.at(x_location).second) {
         // if vertex hasn't already been visited
         if(std::find(visited.begin(), visited.end(), it) == visited.end()) {
@@ -125,7 +125,7 @@ bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visit
             bool b = path_exists(get_location(it), y, visited);
         }
     }
-    */
+
     return false;
 }
 
