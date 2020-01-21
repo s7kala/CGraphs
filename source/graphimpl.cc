@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <sstream>
 
+// TO-DO - Change commented debug statements to ifdefs debug macros
+
 bool operator<(const Vertex& v1, const Vertex& v2) { 
     return (v1.degree < v2.degree);
 }
@@ -134,7 +136,7 @@ bool GraphImpl::is_path(Vertex x, Vertex y) {
     if(x_location != -1 && y_location != -1) {  // both vertices exist in the graph
         std::vector<Vertex> visited;
         visited.emplace_back(x);
-        std::cout << "Finding path from " << x << " to " << y << '\n';
+   //     std::cout << "Finding path from " << x << " to " << y << '\n';
         return path_exists(x_location, y, visited);
     }
     return false;
