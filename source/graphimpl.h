@@ -11,6 +11,7 @@
 struct Vertex {
     std::string name;
     int degree;
+    // add neighbours list?
     Vertex(std::string n = "", int deg = 0): name{n}, degree{deg} {}
     bool operator==(const Vertex &v) { return (name == v.name); }
 };

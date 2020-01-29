@@ -136,7 +136,11 @@ bool GraphImpl::is_path(Vertex x, Vertex y) {
     if(x_location != -1 && y_location != -1) {  // both vertices exist in the graph
         std::vector<Vertex> visited;
         visited.emplace_back(x);
-   //     std::cout << "Finding path from " << x << " to " << y << '\n';
+        #ifdef DEBUG
+            std::cout << "visited so far:";
+            for(auto &it : visited) std::cout << ' ' << it.name;
+            std::cout << "\nFinding path from " << x << " to " << y << '\n';
+        #endif
         return path_exists(x_location, y, visited);
     }
     return false;
@@ -165,6 +169,7 @@ void GraphImpl::set_bipartite() {
 
 // TO-DO
 void GraphImpl::set_planar() {
+
 
 }
 
