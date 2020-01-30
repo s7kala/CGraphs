@@ -122,7 +122,7 @@ bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visit
         if(std::find(visited.begin(), visited.end(), it) == visited.end()) {
             if(it == y) return true;
             visited.emplace_back(it);
-            bool b = path_exists(get_location(it), y, visited);
+            if(path_exists(get_location(it), y, visited)) return true;
         }
     }
 
@@ -152,6 +152,7 @@ void GraphImpl::set_connected() {
     for(int i = 0; i < vsize; ++i) {
         for(int j = i + 1; j < vsize; ++j) {
             if(!is_path(V.at(i), V.at(j))) {
+                // Add ifdef debug or not?
                 std::cout << "There is no path from " << V.at(i)
                           << " to " << V.at(j) << std::endl;
                 connected = 0;

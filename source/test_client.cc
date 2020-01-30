@@ -15,8 +15,8 @@ int main() {
     std::cout << g;
     // TO-DO
     // run client tests
-    /*
+    
     std::cout << (g.is_connected() ? "Connected" : "Not connected");
     std::cout << '\n';  
-    */
+
 }
