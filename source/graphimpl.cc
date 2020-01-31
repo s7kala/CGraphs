@@ -147,6 +147,7 @@ bool GraphImpl::is_path(Vertex x, Vertex y) {
 }
 
 // TO-DO
+// if graph is connected, set connected to 1, else to 0
 void GraphImpl::set_connected() {
     int vsize = V.size();
     for(int i = 0; i < vsize; ++i) {
@@ -164,6 +165,7 @@ void GraphImpl::set_connected() {
 }
 
 // TO-DO
+// if graph is bipartite, set bipartite to 1, else to 0
 void GraphImpl::set_bipartite() {
 
 }
