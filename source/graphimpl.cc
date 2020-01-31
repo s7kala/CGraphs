@@ -60,6 +60,8 @@ void GraphImpl::print_properties(std::ostream& out) {
     out << '\n';
 }
 
+/* Build the adjacency list and initialize vertex and edge sets along
+   with degree sequence from the input stream */
 void input_adjacency_list(std::istream& in, GraphImpl& gp) {
     // initialize vertex set, edge set and degree set as well
     Vertex vertex, neighbour;
@@ -96,8 +98,23 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
     gp.E = edge_set;
 }
 
+/* Initialize the graph using only vertices and edges from the input stream
+   Each line corresponds to either an edge or a vertex */
+void input_edges(std::istream& in, GraphImpl& gp) {
+    Vertex vertex_1, vertex_2;
+    std::string line;
+    while(getline(in, line)) {
+        std::stringstream ss(line);
+        ss >> vertex_1 >> vertex_2;
+        // TO-DO
+    }
+
+}
+
 std::istream& operator>>(std::istream& in, GraphImpl& gp) {
     input_adjacency_list(in, gp);
+    // input edges/vertex
+    // input_edges(std::istream& in, GraphImpl& gp)
     return in;
 }
 
@@ -113,7 +130,6 @@ int GraphImpl::get_location(Vertex x) {
     return location - 1;
 }
 
-// TO-DO
 // find if there is a path from x to y, assuming that both x and y exist in the graph
 bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visited) {
     // search in neighbours of x
@@ -129,7 +145,6 @@ bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visit
     return false;
 }
 
-// TO-DO
 bool GraphImpl::is_path(Vertex x, Vertex y) {
     int x_location = get_location(x);
     int y_location = get_location(y);
@@ -146,10 +161,11 @@ bool GraphImpl::is_path(Vertex x, Vertex y) {
     return false;
 }
 
-// TO-DO
 // if graph is connected, set connected to 1, else to 0
 void GraphImpl::set_connected() {
     int vsize = V.size();
+    /* The graph is connected iff there is a path from each
+       vertex to each other vertex in the graph */
     for(int i = 0; i < vsize; ++i) {
         for(int j = i + 1; j < vsize; ++j) {
             if(!is_path(V.at(i), V.at(j))) {
@@ -167,6 +183,7 @@ void GraphImpl::set_connected() {
 // TO-DO
 // if graph is bipartite, set bipartite to 1, else to 0
 void GraphImpl::set_bipartite() {
+
 
 }
 
