@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
         else std::cout << "Unknown command line option: " << flag << std::endl;
     }
     Graph g;
-    std::cout << "Enter an adjacency list for a graph. Use one line for each row:\n";
+    std::cout << "Enter the vertices/edges in the graph(one per line)\n";
     try {
         std::cin >> g;
     } catch (Exception &e) {

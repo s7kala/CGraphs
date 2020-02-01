@@ -44,6 +44,16 @@ std::ostream& operator<<(std::ostream& out, const GraphImpl& gp) {
         if(i < int(gp.E.size() - 1)) out << ", ";
     }
     out << "}\n";
+    #ifdef DEBUG
+    // print out adjacency list
+        for(auto &it : gp.G) {
+            out << it.first << ":";
+            for(auto &nb : it.second) {
+                out << " " << nb; 
+            }
+            out << '\n';
+        }
+    #endif
     return out;
 }
 
