@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "vector": "cpp",
-        "string": "cpp",
-        "map": "cpp",
-        "memory": "cpp",
-        "string_view": "cpp"
-    }
-}
