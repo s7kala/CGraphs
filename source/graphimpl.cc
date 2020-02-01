@@ -75,7 +75,7 @@ bool exists_in(std::vector<T> list, T t) {
     return !(std::find(list.begin(), list.end(), t) == list.end());
 }
 
-int get_location(Vertex x, const GraphImpl& gp) {
+int get_location(const Vertex& x, const GraphImpl& gp) {
     int location = -1, index = 0;
     for(auto &it : gp.G) {
         ++index;
@@ -223,11 +223,10 @@ bool GraphImpl::is_path(Vertex x, Vertex y) {
 
 // if graph is connected, set connected to 1, else to 0
 void GraphImpl::set_connected() {
-    int vsize = V.size();
     /* The graph is connected iff there is a path from each
        vertex to each other vertex in the graph */
-    for(int i = 0; i < vsize; ++i) {
-        for(int j = i + 1; j < vsize; ++j) {
+    for(int i = 0; i < int(V.size()); ++i) {
+        for(int j = i + 1; j < int(V.size()); ++j) {
             if(!is_path(V.at(i), V.at(j))) {
                 // Add ifdef debug or not?
                 std::cout << "There is no path from " << V.at(i)
@@ -240,11 +239,37 @@ void GraphImpl::set_connected() {
     connected = 1;
 }
 
+
 // TO-DO
 // if graph is bipartite, set bipartite to 1, else to 0
+// Color vector to store 0 or 1 for a 2 colored graph
+bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, std::map<Vertex, int>& color, const GraphImpl& gp) {
+    int index = get_location(parent, gp);
+    // go through neigbhours of s
+    for (auto &it : gp.G.at(index).second){
+        // if neigbhours haven't been visited
+        if(!exists_in(visited, it)){
+            visited.emplace_back(it);
+            color.insert({it, !color[parent]});
+            parent = it;
+            if(!color_bipartite(parent, visited, color, gp)) return false;
+        }
+        else if(color[parent] == color[it]){
+            std::cerr << "The vertices " << it << "and " << parent << "are of the same color" << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+
 void GraphImpl::set_bipartite() {
-
-
+    std::vector<Vertex> visited;
+    Vertex parent = G.at(0).first;
+    visited.emplace_back(parent);
+    std::map<Vertex, int> color;
+    color.insert({parent, 0});
+    bipartite = color_bipartite(parent, visited, color, *this);
 }
 
 // TO-DO
