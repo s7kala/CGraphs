@@ -13,7 +13,7 @@ struct Vertex {
     int degree;
     // add neighbours list?
     Vertex(std::string n = "", int deg = 0): name{n}, degree{deg} {}
-    bool operator==(const Vertex &v) { return (name == v.name); }
+    bool operator==(const Vertex& v) { return (name == v.name); }
 };
 
 struct Edge {
@@ -46,12 +46,10 @@ struct GraphImpl {
     void print_properties(std::ostream&);
 private:
     bool path_exists(int x_location, Vertex y, std::vector<Vertex>& visited);
-    int get_location(Vertex x);
     void set_planar();
     void set_bipartite();
     void set_connected();
     void set_has_perfect_matching();
-
 };
 
 std::istream& operator>>(std::istream&, GraphImpl&);

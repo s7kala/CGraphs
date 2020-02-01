@@ -60,6 +60,23 @@ void GraphImpl::print_properties(std::ostream& out) {
     out << '\n';
 }
 
+template <typename T>
+bool exists_in(std::vector<T> list, T t) {
+    return !(std::find(list.begin(), list.end(), t) == list.end());
+}
+
+int get_location(Vertex x, const GraphImpl& gp) {
+    int location = -1, index = 0;
+    for(auto &it : gp.G) {
+        ++index;
+        if(it.first.name == x.name) {
+            location = index;
+            break;
+        }
+    }
+    return location - 1;
+}
+
 /* Build the adjacency list and initialize vertex and edge sets along
    with degree sequence from the input stream */
 void input_adjacency_list(std::istream& in, GraphImpl& gp) {
@@ -71,8 +88,8 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
     while(getline(in, line)) {
         std::stringstream sline(line);
         sline >> vertex;
-        // if element is not already in vertex set
-        if(std::find(vertex_set.begin(), vertex_set.end(), vertex) == vertex_set.end()) {
+        // if element is not already in vertex set     
+        if(!exists_in(vertex_set, vertex)) {
             int degree = 0;
             std::vector<Vertex> row;
             while(sline >> neighbour) {
@@ -81,7 +98,7 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
                     row.emplace_back(neighbour);
                     Edge e(vertex, neighbour);
                     // if edge is not already in edge set
-                    if(std::find(edge_set.begin(), edge_set.end(), e) == edge_set.end()) {
+                    if(!exists_in(edge_set, e)) {
                         edge_set.emplace_back(e);
                     }
                     degree++;
@@ -101,33 +118,66 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
 /* Initialize the graph using only vertices and edges from the input stream
    Each line corresponds to either an edge or a vertex */
 void input_edges(std::istream& in, GraphImpl& gp) {
-    Vertex vertex_1, vertex_2;
     std::string line;
     while(getline(in, line)) {
+        Vertex vertex_1, vertex_2;
         std::stringstream ss(line);
         ss >> vertex_1 >> vertex_2;
-        // TO-DO
+        // if input is an edge
+        if(vertex_1.name != "" && vertex_2.name != "") {
+            Edge e(vertex_1, vertex_2);
+            // if edge doesn't exist
+            if(!exists_in(gp.E, e)) {
+                gp.E.emplace_back(e);
+                bool vertex_1_exists = exists_in(gp.V, vertex_1);
+                bool vertex_2_exists = exists_in(gp.V, vertex_2);
+                // if both vertices don't exist
+                if(!vertex_1_exists && !vertex_2_exists) {
+                    gp.V.emplace_back(vertex_1);
+                    gp.V.emplace_back(vertex_2);
+                    std::vector<Vertex> neighbour_1, neighbour_2;
+                    neighbour_1.emplace_back(vertex_2);
+                    neighbour_2.emplace_back(vertex_1);
+                    std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
+                    std::pair<Vertex, std::vector<Vertex>> p2(vertex_2, neighbour_2);
+                    gp.G.emplace_back(p1);
+                    gp.G.emplace_back(p2);
+                } else if(vertex_1_exists && vertex_2_exists) {
+                    gp.G.at(get_location(vertex_1, gp)).second.emplace_back(vertex_2);
+                    gp.G.at(get_location(vertex_2, gp)).second.emplace_back(vertex_1);    
+                } else if(vertex_1_exists) {
+                    gp.V.emplace_back(vertex_2);
+                    gp.G.at(get_location(vertex_1, gp)).second.emplace_back(vertex_2);
+                    std::vector<Vertex> neighbour_2;
+                    neighbour_2.emplace_back(vertex_1);
+                    std::pair<Vertex, std::vector<Vertex>> p2(vertex_2, neighbour_2);
+                    gp.G.emplace_back(p2);
+                } else {
+                    gp.V.emplace_back(vertex_1);
+                    gp.G.at(get_location(vertex_2, gp)).second.emplace_back(vertex_1);
+                    std::vector<Vertex> neighbour_1;
+                    neighbour_1.emplace_back(vertex_2);
+                    std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
+                    gp.G.emplace_back(p1);
+                }
+            }
+        }
+        // if input is a vertex
+        if(!exists_in(gp.V, vertex_1)) {
+            gp.V.emplace_back(vertex_1);
+            std::vector<Vertex> neighbour_1;
+            std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
+            gp.G.emplace_back(p1);
+        }
     }
-
+    for(auto &it : gp.V) gp.vertex_degrees.insert({it, it.degree});
 }
 
 std::istream& operator>>(std::istream& in, GraphImpl& gp) {
-    input_adjacency_list(in, gp);
+    //input_adjacency_list(in, gp);
     // input edges/vertex
-    // input_edges(std::istream& in, GraphImpl& gp)
+    input_edges(in, gp);
     return in;
-}
-
-int GraphImpl::get_location(Vertex x) {
-    int location = -1, index = 0;
-    for(auto &it : G) {
-        ++index;
-        if(it.first == x) {
-            location = index;
-            break;
-        }
-    }
-    return location - 1;
 }
 
 // find if there is a path from x to y, assuming that both x and y exist in the graph
@@ -135,10 +185,10 @@ bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visit
     // search in neighbours of x
     for(auto &it : G.at(x_location).second) {
         // if vertex hasn't already been visited
-        if(std::find(visited.begin(), visited.end(), it) == visited.end()) {
+        if(!exists_in(visited, it)) {
             if(it == y) return true;
             visited.emplace_back(it);
-            if(path_exists(get_location(it), y, visited)) return true;
+            if(path_exists(get_location(it, *this), y, visited)) return true;
         }
     }
 
@@ -146,8 +196,8 @@ bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visit
 }
 
 bool GraphImpl::is_path(Vertex x, Vertex y) {
-    int x_location = get_location(x);
-    int y_location = get_location(y);
+    int x_location = get_location(x, *this);
+    int y_location = get_location(y, *this);
     if(x_location != -1 && y_location != -1) {  // both vertices exist in the graph
         std::vector<Vertex> visited;
         visited.emplace_back(x);

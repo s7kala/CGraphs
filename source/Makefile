@@ -7,7 +7,14 @@ DEPENDS = ${OBJECTS:.o=.d}
 
 ${EXEC}: ${OBJECTS}
 	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
-	${CXX} ${CXXFLAGS} -DDEBUG -g ${OBJECTS} -o ${EXEC_G}
+
+debug: CXXFLAGS += -DDEBUG -g
+
+debug: ${EXEC_G}
+
+
+${EXEC_G}: ${OBJECTS}
+	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC_G}
 
 -include ${DEPENDS}
 
