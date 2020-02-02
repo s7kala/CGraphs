@@ -173,7 +173,7 @@ void input_edges(std::istream& in, GraphImpl& gp) {
             }
         }
         // if input is a vertex
-        if(!exists_in(gp.V, vertex_1)) {
+        if(vertex_1.name != "" && !exists_in(gp.V, vertex_1)) {
             gp.V.emplace_back(vertex_1);
             std::vector<Vertex> neighbour_1;
             std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
@@ -223,39 +223,41 @@ bool GraphImpl::is_path(Vertex x, Vertex y) {
 
 // if graph is connected, set connected to 1, else to 0
 void GraphImpl::set_connected() {
-    /* The graph is connected iff there is a path from each
-       vertex to each other vertex in the graph */
-    for(int i = 0; i < int(V.size()); ++i) {
-        for(int j = i + 1; j < int(V.size()); ++j) {
-            if(!is_path(V.at(i), V.at(j))) {
-                // Add ifdef debug or not?
-                std::cout << "There is no path from " << V.at(i)
-                          << " to " << V.at(j) << std::endl;
-                connected = 0;
-                return;
+    if(G.size() == 0) connected = 1;
+    else {
+      /* The graph is connected iff there is a path from each
+         vertex to each other vertex in the graph */
+        for(int i = 0; i < int(V.size()); ++i) {
+            for(int j = i + 1; j < int(V.size()); ++j) {
+                if(!is_path(V.at(i), V.at(j))) {
+                    // Add ifdef debug or not?
+                    std::cout << "There is no path from " << V.at(i)
+                                << " to " << V.at(j) << std::endl;
+                    connected = 0;
+                    return;
+                }
             }
         }
+        connected = 1;
     }
-    connected = 1;
 }
 
 
 // TO-DO
 // if graph is bipartite, set bipartite to 1, else to 0
-// Color vector to store 0 or 1 for a 2 colored graph
-bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, std::map<Vertex, int>& color, const GraphImpl& gp) {
+// assume G is non-empty
+bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, GraphImpl& gp) {
     int index = get_location(parent, gp);
-    // go through neigbhours of s
+    // go through neigbhours of parent
     for (auto &it : gp.G.at(index).second){
         // if neigbhours haven't been visited
         if(!exists_in(visited, it)){
             visited.emplace_back(it);
-            color.insert({it, !color[parent]});
-            parent = it;
-            if(!color_bipartite(parent, visited, color, gp)) return false;
+            gp.G.at(get_location(it, gp)).first.color = !gp.G.at(get_location(parent, gp)).first.color;
+            if(!color_bipartite(it, visited, gp)) return false;
         }
-        else if(color[parent] == color[it]){
-            std::cerr << "The vertices " << it << "and " << parent << "are of the same color" << std::endl;
+        else if(gp.G.at(get_location(parent, gp)).first.color == gp.G.at(get_location(it, gp)).first.color){
+            std::cerr << "The vertices " << it << " and " << parent << " are of the same color" << std::endl;
             return false;
         }
     }
@@ -264,18 +266,28 @@ bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, std::map<Vert
 
 
 void GraphImpl::set_bipartite() {
-    std::vector<Vertex> visited;
-    Vertex parent = G.at(0).first;
-    visited.emplace_back(parent);
-    std::map<Vertex, int> color;
-    color.insert({parent, 0});
-    bipartite = color_bipartite(parent, visited, color, *this);
+    if(G.size() == 0) bipartite = 1;
+    else {
+        std::vector<Vertex> visited;
+        G.at(0).first.color = 0;
+        visited.emplace_back(G.at(0).first);
+        if(color_bipartite(G.at(0).first, visited, *this)) bipartite = 1;
+        else bipartite = 0;
+        // cleanup
+        for(auto &it : G) {
+            std::cout << it.first << ": " << it.first.color << '\n';
+            it.first.color = -1;
+        }
+    }
 }
 
 // TO-DO
 void GraphImpl::set_planar() {
+    if(G.size() == 0) planar = 1;
+    else {
 
 
+    }
 }
 
 bool GraphImpl::is_connected() {
