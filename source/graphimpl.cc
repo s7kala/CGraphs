@@ -275,7 +275,6 @@ void GraphImpl::set_bipartite() {
         else bipartite = 0;
         // cleanup
         for(auto &it : G) {
-            std::cout << it.first << ": " << it.first.color << '\n';
             it.first.color = -1;
         }
     }
