@@ -246,18 +246,18 @@ void GraphImpl::set_connected() {
 // TO-DO
 // if graph is bipartite, set bipartite to 1, else to 0
 // assume G is non-empty
-bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, GraphImpl& gp) {
+bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, std::map<std::string, int>& color, GraphImpl& gp) {
     int index = get_location(parent, gp);
     // go through neigbhours of parent
     for (auto &it : gp.G.at(index).second){
         // if neigbhours haven't been visited
         if(!exists_in(visited, it)){
             visited.emplace_back(it);
-            gp.G.at(get_location(it, gp)).first.color = !gp.G.at(get_location(parent, gp)).first.color;
-            if(!color_bipartite(it, visited, gp)) return false;
+            color[it.name] = !color[parent.name];
+            if(!color_bipartite(it, visited, color, gp)) return false;
         }
-        else if(gp.G.at(get_location(parent, gp)).first.color == gp.G.at(get_location(it, gp)).first.color){
-            std::cerr << "The vertices " << it << " and " << parent << " are of the same color" << std::endl;
+        else if(color[it.name] == color[parent.name]){
+            std::cout << "The vertices " << it << " and " << parent << " are of the same color" << std::endl;
             return false;
         }
     }
@@ -269,14 +269,12 @@ void GraphImpl::set_bipartite() {
     if(G.size() == 0) bipartite = 1;
     else {
         std::vector<Vertex> visited;
-        G.at(0).first.color = 0;
-        visited.emplace_back(G.at(0).first);
-        if(color_bipartite(G.at(0).first, visited, *this)) bipartite = 1;
+        std::map<std::string, int> color;
+        Vertex parent = G.at(0).first;
+        color[parent.name] = 0;
+        visited.emplace_back(parent);
+        if(color_bipartite(G.at(0).first, visited, color, *this)) bipartite = 1;
         else bipartite = 0;
-        // cleanup
-        for(auto &it : G) {
-            it.first.color = -1;
-        }
     }
 }
 
