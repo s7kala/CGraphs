@@ -103,7 +103,7 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
             int degree = 0;
             std::vector<Vertex> row;
             while(sline >> neighbour) {
-                if(neighbour == vertex) std::cerr << "Loop detected, skipping this input.\n";
+                if(neighbour == vertex) std::cout << "Loop detected, skipping this input.\n";
                 else {
                     row.emplace_back(neighbour);
                     Edge e(vertex, neighbour);
@@ -119,12 +119,14 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
             gp.vertex_degrees.insert({vertex, degree});
             std::pair<Vertex, std::vector<Vertex>> p(vertex, row);
             gp.G.emplace_back(p); 
-        } else std::cerr << "Already added this vertex! Skipping this input.\n";
+        } else std::cout << "Already added this vertex! Skipping this input.\n";
     }
     gp.V = vertex_set;
     gp.E = edge_set;
 }
 
+
+// TO-DO optimize input
 /* Initialize the graph using only vertices and edges from the input stream
    Each line corresponds to either an edge or a vertex */
 void input_edges(std::istream& in, GraphImpl& gp) {
@@ -257,7 +259,9 @@ bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, std::map<std:
             if(!color_bipartite(it, visited, color, gp)) return false;
         }
         else if(color[it.name] == color[parent.name]){
-            std::cout << "The vertices " << it << " and " << parent << " are of the same color" << std::endl;
+            #ifdef DEBUG
+                std::cout << "The vertices " << it << " and " << parent << " are of the same color" << std::endl;
+            #endif
             return false;
         }
     }
