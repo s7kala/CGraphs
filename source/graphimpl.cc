@@ -103,7 +103,11 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
             int degree = 0;
             std::vector<Vertex> row;
             while(sline >> neighbour) {
-                if(neighbour == vertex) std::cout << "Loop detected, skipping this input.\n";
+                if(neighbour == vertex) {
+                    #ifdef DEBUG
+                        std::cout << "Loop detected, skipping this input.\n";
+                    #endif
+                }
                 else {
                     row.emplace_back(neighbour);
                     Edge e(vertex, neighbour);
@@ -119,12 +123,58 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
             gp.vertex_degrees.insert({vertex, degree});
             std::pair<Vertex, std::vector<Vertex>> p(vertex, row);
             gp.G.emplace_back(p); 
-        } else std::cout << "Already added this vertex! Skipping this input.\n";
+        } 
+        else {
+            #ifdef DEBUG
+                std::cout << "Already added this vertex! Skipping this input.\n";
+            #endif
+        }
     }
     gp.V = vertex_set;
     gp.E = edge_set;
 }
 
+void GraphImpl::add_edge(Edge e) {
+    E.emplace_back(e);
+    Vertex vertex_1 = e.edge.first, vertex_2 = e.edge.second;
+    bool vertex_1_exists = exists_in(V, vertex_1);
+    bool vertex_2_exists = exists_in(V, vertex_2);
+    // if both vertices don't exist
+    if(!vertex_1_exists && !vertex_2_exists) {
+     // first add entries for both vertices in vertex set
+        V.emplace_back(vertex_1);
+        V.emplace_back(vertex_2);
+        // now create vectors to store neighbours of the vertex,
+        // which is the second part of each entry in the adjacency list
+        std::vector<Vertex> neighbour_1, neighbour_2;
+        neighbour_1.emplace_back(vertex_2);
+        neighbour_2.emplace_back(vertex_1);
+        // create the entries for the adjacency list
+        std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
+        std::pair<Vertex, std::vector<Vertex>> p2(vertex_2, neighbour_2);
+        G.emplace_back(p1);
+        G.emplace_back(p2);
+    } else if(vertex_1_exists && vertex_2_exists) { // if both vertices exist
+        // find entries of both vertices and add each other in their vector
+        // of neighbours
+        G.at(get_location(vertex_1, *this)).second.emplace_back(vertex_2);
+        G.at(get_location(vertex_2, *this)).second.emplace_back(vertex_1);    
+    } else if(vertex_1_exists) {  
+        V.emplace_back(vertex_2);
+        G.at(get_location(vertex_1, *this)).second.emplace_back(vertex_2);
+        std::vector<Vertex> neighbour_2;
+        neighbour_2.emplace_back(vertex_1);
+        std::pair<Vertex, std::vector<Vertex>> p2(vertex_2, neighbour_2);
+        G.emplace_back(p2);
+    } else {
+        V.emplace_back(vertex_1);
+        G.at(get_location(vertex_2, *this)).second.emplace_back(vertex_1);
+        std::vector<Vertex> neighbour_1;
+        neighbour_1.emplace_back(vertex_2);
+        std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
+        G.emplace_back(p1);
+    }
+}
 
 // TO-DO optimize input
 /* Initialize the graph using only vertices and edges from the input stream
@@ -139,42 +189,10 @@ void input_edges(std::istream& in, GraphImpl& gp) {
         if(vertex_1.name != "" && vertex_2.name != "") {
             Edge e(vertex_1, vertex_2);
             // if edge doesn't exist
-            if(!exists_in(gp.E, e)) {
-                gp.E.emplace_back(e);
-                bool vertex_1_exists = exists_in(gp.V, vertex_1);
-                bool vertex_2_exists = exists_in(gp.V, vertex_2);
-                // if both vertices don't exist
-                if(!vertex_1_exists && !vertex_2_exists) {
-                    gp.V.emplace_back(vertex_1);
-                    gp.V.emplace_back(vertex_2);
-                    std::vector<Vertex> neighbour_1, neighbour_2;
-                    neighbour_1.emplace_back(vertex_2);
-                    neighbour_2.emplace_back(vertex_1);
-                    std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
-                    std::pair<Vertex, std::vector<Vertex>> p2(vertex_2, neighbour_2);
-                    gp.G.emplace_back(p1);
-                    gp.G.emplace_back(p2);
-                } else if(vertex_1_exists && vertex_2_exists) {
-                    gp.G.at(get_location(vertex_1, gp)).second.emplace_back(vertex_2);
-                    gp.G.at(get_location(vertex_2, gp)).second.emplace_back(vertex_1);    
-                } else if(vertex_1_exists) {
-                    gp.V.emplace_back(vertex_2);
-                    gp.G.at(get_location(vertex_1, gp)).second.emplace_back(vertex_2);
-                    std::vector<Vertex> neighbour_2;
-                    neighbour_2.emplace_back(vertex_1);
-                    std::pair<Vertex, std::vector<Vertex>> p2(vertex_2, neighbour_2);
-                    gp.G.emplace_back(p2);
-                } else {
-                    gp.V.emplace_back(vertex_1);
-                    gp.G.at(get_location(vertex_2, gp)).second.emplace_back(vertex_1);
-                    std::vector<Vertex> neighbour_1;
-                    neighbour_1.emplace_back(vertex_2);
-                    std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
-                    gp.G.emplace_back(p1);
-                }
-            }
+            if(!exists_in(gp.E, e))
+                gp.add_edge(e);
         }
-        // if input is a vertex
+        // if input is a vertex not already in the graph
         if(vertex_1.name != "" && !exists_in(gp.V, vertex_1)) {
             gp.V.emplace_back(vertex_1);
             std::vector<Vertex> neighbour_1;
@@ -182,6 +200,7 @@ void input_edges(std::istream& in, GraphImpl& gp) {
             gp.G.emplace_back(p1);
         }
     }
+    // create degree sequence
     for(auto &it : gp.V) gp.vertex_degrees.insert({it, it.degree});
 }
 
@@ -232,9 +251,10 @@ void GraphImpl::set_connected() {
         for(int i = 0; i < int(V.size()); ++i) {
             for(int j = i + 1; j < int(V.size()); ++j) {
                 if(!is_path(V.at(i), V.at(j))) {
-                    // Add ifdef debug or not?
-                    std::cout << "There is no path from " << V.at(i)
-                                << " to " << V.at(j) << std::endl;
+                    #ifdef DEBUG
+                        std::cout << "There is no path from " << V.at(i)
+                                  << " to " << V.at(j) << std::endl;
+                    #endif
                     connected = 0;
                     return;
                 }
