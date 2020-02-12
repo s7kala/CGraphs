@@ -35,5 +35,5 @@ ${EXEC_G}: ${OBJECTS}
 .PHONY: clean
 
 clean:
-	-rm -f ${EXEC} ${EXEC_G} ${EXEC_SPEED}
+	-rm -f ${EXEC} ${EXEC_G} ${EXEC_SPEED} *.o *.d
 	
