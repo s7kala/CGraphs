@@ -5,7 +5,9 @@
 #include <algorithm>
 #include <sstream>
 
-// TO-DO - Change commented debug statements to ifdefs debug macros
+// ################################## METHOD ABSTRACTIONS ################################## //
+
+// ************** OPERATOR OVERLOADS ************** //
 
 bool operator<(const Vertex& v1, const Vertex& v2) { 
     return (v1.degree < v2.degree);
@@ -46,6 +48,7 @@ std::ostream& operator<<(std::ostream& out, const GraphImpl& gp) {
     out << "}\n";
     #ifdef DEBUG
     // print out adjacency list
+        out << "Adjacency list:\n";
         for(auto &it : gp.G) {
             out << it.first << ":";
             for(auto &nb : it.second) {
@@ -57,24 +60,21 @@ std::ostream& operator<<(std::ostream& out, const GraphImpl& gp) {
     return out;
 }
 
-void GraphImpl::print_properties(std::ostream& out) {
-    out << *this;
-    out << "Degree sequence: ";
-    for(auto &it : vertex_degrees)
-        out << it.second << ' ';
-    out << '\n';
-    out << "The graph is ";
-    out << (is_planar() ? "planar, " : "not planar, ");
-    out << (is_connected() ? "connected, " : "not connected, ");
-    out << (is_bipartite() ? "bipartite." : "not bipartite.");
-    out << '\n';
+std::istream& operator>>(std::istream& in, GraphImpl& gp) {
+    //input_adjacency_list(in, gp);
+    // input edges/vertex
+    input_edges(in, gp);
+    return in;
 }
+
+// ************** COMMON FUNCTIONS AND HELPERS ************** //
 
 template <typename T>
 bool exists_in(std::vector<T> list, T t) {
     return !(std::find(list.begin(), list.end(), t) == list.end());
 }
 
+// return index of a vertex in the graph
 int get_location(const Vertex& x, const GraphImpl& gp) {
     int location = -1, index = 0;
     for(auto &it : gp.G) {
@@ -86,6 +86,31 @@ int get_location(const Vertex& x, const GraphImpl& gp) {
     }
     return location - 1;
 }
+
+// TO-DO
+// if graph is bipartite, set bipartite to 1, else to 0
+// assume G is non-empty
+bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, std::map<std::string, int>& color, GraphImpl& gp) {
+    int index = get_location(parent, gp);
+    // go through neigbhours of parent
+    for (auto &it : gp.G.at(index).second){
+        // if neigbhours haven't been visited
+        if(!exists_in(visited, it)){
+            visited.emplace_back(it);
+            color[it.name] = !color[parent.name];
+            if(!color_bipartite(it, visited, color, gp)) return false;
+        }
+        else if(color[it.name] == color[parent.name]){
+            #ifdef DEBUG
+                std::cout << "The vertices " << it << " and " << parent << " are of the same color" << std::endl;
+            #endif
+            return false;
+        }
+    }
+    return true;
+}
+
+// **************** INPUT PROCEDURES **************** //
 
 /* Build the adjacency list and initialize vertex and edge sets along
    with degree sequence from the input stream */
@@ -134,6 +159,49 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
     gp.E = edge_set;
 }
 
+// TO-DO optimize input
+/* Initialize the graph using only vertices and edges from the input stream
+   Each line corresponds to either an edge or a vertex */
+void input_edges(std::istream& in, GraphImpl& gp) {
+    std::string line;
+    while(getline(in, line)) {
+        Vertex vertex_1, vertex_2;
+        std::stringstream ss(line);
+        ss >> vertex_1 >> vertex_2;
+        // if input is an edge
+        if(vertex_1.name != "" && vertex_2.name != "") {
+            Edge e(vertex_1, vertex_2);
+            // if edge doesn't exist
+            if(!exists_in(gp.E, e))
+                gp.add_edge(e);
+        }
+        // if input is a vertex not already in the graph
+        if(vertex_1.name != "" && !exists_in(gp.V, vertex_1)) {
+            gp.V.emplace_back(vertex_1);
+            std::vector<Vertex> neighbour_1;
+            std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
+            gp.G.emplace_back(p1);
+        }
+    }
+    // create degree sequence
+    for(auto &it : gp.V) gp.vertex_degrees.insert({it, it.degree});
+}
+
+// ######################################## METHODS ######################################## //
+
+void GraphImpl::print_properties(std::ostream& out) {
+    out << *this;
+    out << "Degree sequence: ";
+    for(auto &it : vertex_degrees)
+        out << it.second << ' ';
+    out << '\n';
+    out << "The graph is ";
+    out << (is_connected() ? "connected, " : "not connected, ");
+    out << (is_bipartite() ? "bipartite." : "not bipartite.");
+    out << (is_planar() ? "planar, " : "not planar, ");
+    out << '\n';
+}
+
 void GraphImpl::add_edge(Edge e) {
     E.emplace_back(e);
     Vertex vertex_1 = e.edge.first, vertex_2 = e.edge.second;
@@ -174,41 +242,6 @@ void GraphImpl::add_edge(Edge e) {
         std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
         G.emplace_back(p1);
     }
-}
-
-// TO-DO optimize input
-/* Initialize the graph using only vertices and edges from the input stream
-   Each line corresponds to either an edge or a vertex */
-void input_edges(std::istream& in, GraphImpl& gp) {
-    std::string line;
-    while(getline(in, line)) {
-        Vertex vertex_1, vertex_2;
-        std::stringstream ss(line);
-        ss >> vertex_1 >> vertex_2;
-        // if input is an edge
-        if(vertex_1.name != "" && vertex_2.name != "") {
-            Edge e(vertex_1, vertex_2);
-            // if edge doesn't exist
-            if(!exists_in(gp.E, e))
-                gp.add_edge(e);
-        }
-        // if input is a vertex not already in the graph
-        if(vertex_1.name != "" && !exists_in(gp.V, vertex_1)) {
-            gp.V.emplace_back(vertex_1);
-            std::vector<Vertex> neighbour_1;
-            std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
-            gp.G.emplace_back(p1);
-        }
-    }
-    // create degree sequence
-    for(auto &it : gp.V) gp.vertex_degrees.insert({it, it.degree});
-}
-
-std::istream& operator>>(std::istream& in, GraphImpl& gp) {
-    //input_adjacency_list(in, gp);
-    // input edges/vertex
-    input_edges(in, gp);
-    return in;
 }
 
 // find if there is a path from x to y, assuming that both x and y exist in the graph
@@ -263,31 +296,6 @@ void GraphImpl::set_connected() {
         connected = 1;
     }
 }
-
-
-// TO-DO
-// if graph is bipartite, set bipartite to 1, else to 0
-// assume G is non-empty
-bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, std::map<std::string, int>& color, GraphImpl& gp) {
-    int index = get_location(parent, gp);
-    // go through neigbhours of parent
-    for (auto &it : gp.G.at(index).second){
-        // if neigbhours haven't been visited
-        if(!exists_in(visited, it)){
-            visited.emplace_back(it);
-            color[it.name] = !color[parent.name];
-            if(!color_bipartite(it, visited, color, gp)) return false;
-        }
-        else if(color[it.name] == color[parent.name]){
-            #ifdef DEBUG
-                std::cout << "The vertices " << it << " and " << parent << " are of the same color" << std::endl;
-            #endif
-            return false;
-        }
-    }
-    return true;
-}
-
 
 void GraphImpl::set_bipartite() {
     if(G.size() == 0) bipartite = 1;

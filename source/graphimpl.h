@@ -54,11 +54,23 @@ private:
     void set_has_perfect_matching();
 };
 
+
+// Operator Overloads
 std::istream& operator>>(std::istream&, GraphImpl&);
 std::istream& operator>>(std::istream&, Vertex&);
 std::istream& operator>>(std::istream&, Edge&);
 std::ostream& operator<<(std::ostream&, const GraphImpl&);
 std::ostream& operator<<(std::ostream&, const Vertex&);
 std::ostream& operator<<(std::ostream&, const Edge&);
+
+
+// Method Abstractions
+template <typename T>
+bool exists_in(std::vector<T> list, T t);
+int get_location(const Vertex& x, const GraphImpl& gp);
+bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, std::map<std::string, int>& color, GraphImpl& gp);
+void input_adjacency_list(std::istream& in, GraphImpl& gp);
+void input_edges(std::istream& in, GraphImpl& gp);
+
 
 #endif
