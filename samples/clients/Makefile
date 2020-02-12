@@ -15,8 +15,8 @@ DEPENDS = ${OBJECTS:.o=.d}
 
 ${EXEC}: ${OBJECTS} ${LIB}
 	${CXX} ${CXXFLAGS} ${OBJECTS} ${LIB} -o ${EXEC}
-// TO-DO
-${LIB}:
+# TO-DO
+#${LIB}:
 
 debug: CXXFLAGS += -DDEBUG -g
 
