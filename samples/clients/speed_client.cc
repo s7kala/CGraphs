@@ -1,5 +1,5 @@
-#include "../source/graph.h"
-#include "../source/exception.h"
+#include "../..//source/graph.h"
+#include "../../source/exception.h"
 #include <iostream>
 #include <sstream>
 #include <chrono>

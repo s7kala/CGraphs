@@ -14,4 +14,4 @@ all: ${OBJECTS}
 .PHONY: clean
 
 clean:
-	rm *.o *.d
+	-rm -f *.o *.d
