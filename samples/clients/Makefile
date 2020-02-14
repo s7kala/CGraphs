@@ -18,7 +18,7 @@ ${EXEC}: ${OBJECTS} ${LIB}
 	${CXX} ${CXXFLAGS} ${OBJECTS} ${LIB} -o ${EXEC}
 # TO-DO
 ${LIB}:
-	cd ${LIB_PATH} && make && mv *.o ${CLIENT_PATH}
+	cd ${LIB_PATH} && make && mv *.o ${CLIENT_PATH} && make clean
 
 debug: CXXFLAGS += -DDEBUG -g
 
