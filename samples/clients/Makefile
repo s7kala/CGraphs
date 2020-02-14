@@ -10,13 +10,15 @@ EXEC_SPEED = ${EXEC}_speed
 OBJECTS = test_client.o
 LIB = graph.o graphimpl.o
 LIB_PATH = ../../source/
+CLIENT_PATH = ${PWD}
 OBJECTS_SPEED = speed_client.o
 DEPENDS = ${OBJECTS:.o=.d}
 
 ${EXEC}: ${OBJECTS} ${LIB}
 	${CXX} ${CXXFLAGS} ${OBJECTS} ${LIB} -o ${EXEC}
 # TO-DO
-#${LIB}:
+${LIB}:
+	cd ${LIB_PATH} && make && mv *.o ${CLIENT_PATH}
 
 debug: CXXFLAGS += -DDEBUG -g
 
@@ -32,8 +34,10 @@ ${EXEC_G}: ${OBJECTS}
 
 -include ${DEPENDS}
 
-.PHONY: clean
+.PHONY: clean rmlib
 
 clean:
-	-rm -f ${EXEC} ${EXEC_G} ${EXEC_SPEED} *.o *.d
+	-rm -f ${EXEC} ${EXEC_G} ${EXEC_SPEED} ${OBJECTS} ${DEPENDS}
+rmlib:
+	-rm -f ${LIB}
 	
