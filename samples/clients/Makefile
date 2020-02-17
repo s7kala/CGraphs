@@ -9,16 +9,19 @@ EXEC_G = ${EXEC}_g
 EXEC_SPEED = ${EXEC}_speed
 OBJECTS = test_client.o
 LIB = graph.o graphimpl.o
+LIB_G = ${LIB}
 LIB_PATH = ../../source/
 CLIENT_PATH = ${PWD}
 OBJECTS_SPEED = speed_client.o
 DEPENDS = ${OBJECTS:.o=.d}
 
-${EXEC}: ${OBJECTS} ${LIB}
+${EXEC}: ${LIB} ${OBJECTS}
 	${CXX} ${CXXFLAGS} ${OBJECTS} ${LIB} -o ${EXEC}
 # TO-DO
 ${LIB}:
 	cd ${LIB_PATH} && make && mv *.o ${CLIENT_PATH} && make clean
+LIB_DEBUG:
+	cd ${LIB_PATH} && make debug && mv *.o ${CLIENT_PATH} && make clean
 
 debug: CXXFLAGS += -DDEBUG -g
 
@@ -26,11 +29,11 @@ debug: ${EXEC_G}
 
 speed: ${EXEC_SPEED}
 
-${EXEC_SPEED}: ${OBJECTS_SPEED} ${LIB}
+${EXEC_SPEED}: ${LIB} ${OBJECTS_SPEED}
 	${CXX} ${CXXFLAGS} ${OBJECTS_SPEED} ${LIB} -o ${EXEC_SPEED}
 
-${EXEC_G}: ${OBJECTS}
-	${CXX} ${CXXFLAGS} ${OBJECTS} ${LIB} -o ${EXEC_G}
+${EXEC_G}: LIB_DEBUG ${OBJECTS}
+	${CXX} ${CXXFLAGS} ${OBJECTS} ${LIB_G} -o ${EXEC_G}
 
 -include ${DEPENDS}
 

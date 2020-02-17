@@ -275,6 +275,7 @@ bool GraphImpl::is_path(Vertex x, Vertex y) {
     return false;
 }
 
+// TO-DO - improve time complexity
 // if graph is connected, set connected to 1, else to 0
 void GraphImpl::set_connected() {
     if(G.size() == 0) connected = 1;
