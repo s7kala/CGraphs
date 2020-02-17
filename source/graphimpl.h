@@ -1,32 +1,14 @@
 #ifndef GRAPHIMPL_H
 #define GRAPHIMPL_H
 
-#include "graph.h"
+#include "vertex.h"
+#include "edge.h"
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <map>
 #include <utility>
-
-struct Vertex {
-    std::string name;
-    int degree;
-    // add neighbours list?
-    Vertex(std::string n = "", int deg = 0): name{n}, degree{deg} {}
-    bool operator==(const Vertex& v) { return (name == v.name); }
-    bool operator<(const Vertex& v) { return (name < v.name); }
-};
-
-struct Edge {
-    std::pair<Vertex, Vertex> edge;
-    Edge(Vertex v1, Vertex v2): 
-        edge{std::make_pair(v1, v2)} {}
-    bool operator==(const Edge& e) {
-        return ((edge.first == e.edge.first && edge.second == e.edge.second) || 
-                (edge.first == e.edge.second && edge.second == e.edge.first));
-    }
-};
-
 
 struct GraphImpl {
     // fields
@@ -46,6 +28,7 @@ struct GraphImpl {
     bool is_path(Vertex v1, Vertex v2);
     void print_properties(std::ostream&);
     void add_edge(Edge e);
+    void shortest_path(Vertex v1, Vertex v2);
 private:
     bool path_exists(int x_location, Vertex y, std::vector<Vertex>& visited);
     void set_planar();
@@ -57,11 +40,7 @@ private:
 
 // Operator Overloads
 std::istream& operator>>(std::istream&, GraphImpl&);
-std::istream& operator>>(std::istream&, Vertex&);
-std::istream& operator>>(std::istream&, Edge&);
 std::ostream& operator<<(std::ostream&, const GraphImpl&);
-std::ostream& operator<<(std::ostream&, const Vertex&);
-std::ostream& operator<<(std::ostream&, const Edge&);
 
 
 // Method Abstractions

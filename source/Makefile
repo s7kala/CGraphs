@@ -5,7 +5,7 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -MMD
 DEBUG_FLAGS = -DDEBUG -g
-OBJECTS = graph.o graphimpl.o
+OBJECTS = graph.o graphimpl.o vertex.o edge.o
 DEPENDS = ${OBJECTS:.o=.d}
 
 all: ${OBJECTS}

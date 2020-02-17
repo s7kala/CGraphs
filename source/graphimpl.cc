@@ -9,30 +9,6 @@
 
 // ************** OPERATOR OVERLOADS ************** //
 
-bool operator<(const Vertex& v1, const Vertex& v2) { 
-    return (v1.degree < v2.degree);
-}
-
-std::ostream& operator<<(std::ostream& out, const Vertex& v) {
-    out << v.name;
-    return out;
-}
-
-std::ostream& operator<<(std::ostream& out, const Edge& e) {
-    out << '(' << e.edge.first << ", " << e.edge.second << ')';
-    return out;
-}
-
-std::istream& operator>>(std::istream& in, Vertex& v) {
-    in >> v.name;
-    return in;
-}
-
-std::istream& operator>>(std::istream& in, Edge& e) {
-    in >> e.edge.first >> e.edge.second;
-    return in;
-}
-
 std::ostream& operator<<(std::ostream& out, const GraphImpl& gp) {
     out << "V(G) = {";
     for(int i = 0; i < int(gp.V.size()); ++i) {

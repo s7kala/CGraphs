@@ -26,6 +26,10 @@ bool Graph::is_path(std::string v1, std::string v2) {
     return pImpl->is_path(Vertex(v1), Vertex(v2));
 }
 
+void Graph::add_edge(std::string v1, std::string v2) {
+    pImpl->add_edge(Edge(Vertex(v1), Vertex(v2)));
+}
+
 std::ostream &operator<<(std::ostream &out, const Graph &g) {
     out << *g.pImpl;
     return out;
