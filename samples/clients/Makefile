@@ -40,7 +40,7 @@ ${EXEC_G}: LIB_DEBUG ${OBJECTS}
 .PHONY: clean rmlib
 
 clean:
-	-rm -f ${EXEC} ${EXEC_G} ${EXEC_SPEED} ${OBJECTS} ${DEPENDS}
+	-rm -f ${EXEC} ${EXEC_G} ${EXEC_SPEED} ${OBJECTS} ${OBJECTS_SPEED} *.d
 rmlib:
 	-rm -f ${LIB}
 	

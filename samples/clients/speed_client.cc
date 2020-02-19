@@ -8,7 +8,7 @@
 // speed test client
 
 // test types
-bool test_connected = false, test_bipartite = true;
+bool test_connected = true, test_bipartite = true;
 bool test_planarity = false;
 
 void run_tests(Graph& g);
