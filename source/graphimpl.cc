@@ -180,7 +180,7 @@ void GraphImpl::print_properties(std::ostream& out) {
 
 void GraphImpl::add_edge(Edge e) {
     E.emplace_back(e);
-    Vertex vertex_1 = e.edge.first, vertex_2 = e.edge.second;
+    Vertex vertex_1 = e.end1, vertex_2 = e.end2;
     bool vertex_1_exists = exists_in(V, vertex_1);
     bool vertex_2_exists = exists_in(V, vertex_2);
     // if both vertices don't exist
@@ -218,6 +218,10 @@ void GraphImpl::add_edge(Edge e) {
         std::pair<Vertex, std::vector<Vertex>> p1(vertex_1, neighbour_1);
         G.emplace_back(p1);
     }
+}
+
+std::vector<std::string> GraphImpl::shortest_path(Vertex v1, Vertex v2) {
+    
 }
 
 // find if there is a path from x to y, assuming that both x and y exist in the graph

@@ -5,7 +5,7 @@
 #include <iostream>
 
 struct Edge {
-    std::pair<Vertex, Vertex> edge;
+    Vertex end1, end2;
     Edge(Vertex v1, Vertex v2);
     bool operator==(const Edge& e);
 };

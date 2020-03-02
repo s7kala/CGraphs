@@ -28,7 +28,7 @@ struct GraphImpl {
     bool is_path(Vertex v1, Vertex v2);
     void print_properties(std::ostream&);
     void add_edge(Edge e);
-    void shortest_path(Vertex v1, Vertex v2);
+    std::vector<std::string> shortest_path(Vertex v1, Vertex v2);
 private:
     bool path_exists(int x_location, Vertex y, std::vector<Vertex>& visited);
     void set_planar();

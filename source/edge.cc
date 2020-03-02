@@ -1,18 +1,18 @@
 #include "edge.h"
 
-Edge::Edge(Vertex v1, Vertex v2): edge{std::make_pair(v1, v2)} {}
+Edge::Edge(Vertex v1, Vertex v2): end1{v1}, end2{v2} {}
 
 bool Edge::operator==(const Edge& e) {
-        return ((edge.first == e.edge.first && edge.second == e.edge.second) || 
-                (edge.first == e.edge.second && edge.second == e.edge.first));
+        return ((end1 == e.end1 && end2 == e.end2) || 
+                (end1 == e.end2 && end2 == e.end1));
     }
 
 std::ostream& operator<<(std::ostream& out, const Edge& e) {
-    out << '(' << e.edge.first << ", " << e.edge.second << ')';
+    out << '(' << e.end1 << ", " << e.end2 << ')';
     return out;
 }
 
 std::istream& operator>>(std::istream& in, Edge& e) {
-    in >> e.edge.first >> e.edge.second;
+    in >> e.end1 >> e.end2;
     return in;
 }
