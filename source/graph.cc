@@ -26,9 +26,22 @@ bool Graph::is_path(std::string v1, std::string v2) {
     return pImpl->is_path(Vertex(v1), Vertex(v2));
 }
 
+void Graph::add_vertex(std::string v) {
+    pImpl->add_vertex(Vertex(v));
+}
+
+void Graph::delete_vertex(std::string v) {
+    pImpl->delete_vertex(Vertex(v));
+}
+
 void Graph::add_edge(std::string v1, std::string v2) {
     pImpl->add_edge(Edge(Vertex(v1), Vertex(v2)));
 }
+
+void Graph::delete_edge(std::string v1, std::string v2) {
+    pImpl->delete_edge(Edge(Vertex(v1), Vertex(v2)));
+}
+
 
 std::vector<std::string> Graph::shortest_path(std::string v1, std::string v2) {
     return pImpl->shortest_path(Vertex(v1), Vertex(v2));

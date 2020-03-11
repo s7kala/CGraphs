@@ -23,7 +23,10 @@ public:
         vertex doesn't exist 
     */
     bool is_path(std::string v1, std::string v2);
+    void add_vertex(std::string v);
+    void delete_vertex(std::string v);
     void add_edge(std::string v1, std::string v2);
+    void delete_edge(std::string v1, std::string v2);
     std::vector<std::string> shortest_path(std::string v1, std::string v2);
     friend std::istream& operator>>(std::istream&, Graph&);
     friend std::ostream& operator<<(std::ostream&, const Graph&);

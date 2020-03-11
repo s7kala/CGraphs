@@ -25,9 +25,9 @@ std::ostream& operator<<(std::ostream& out, const GraphImpl& gp) {
     #ifdef DEBUG
     // print out adjacency list
         out << "Adjacency list:\n";
-        for(auto &it : gp.G) {
+        for(auto const &it : gp.G) {
             out << it.first << ":";
-            for(auto &nb : it.second) {
+            for(auto const &nb : it.second) {
                 out << " " << nb; 
             }
             out << '\n';
@@ -37,8 +37,8 @@ std::ostream& operator<<(std::ostream& out, const GraphImpl& gp) {
 }
 
 std::istream& operator>>(std::istream& in, GraphImpl& gp) {
-    //input_adjacency_list(in, gp);
-    // input edges/vertex
+    // uncomment the line below to use adjacency list for input
+    // input_adjacency_list(in, gp);
     input_edges(in, gp);
     return in;
 }
@@ -53,7 +53,7 @@ bool exists_in(std::vector<T> list, T t) {
 // return index of a vertex in the graph
 int get_location(const Vertex& x, const GraphImpl& gp) {
     int location = -1, index = 0;
-    for(auto &it : gp.G) {
+    for(auto const &it : gp.G) {
         ++index;
         if(it.first.name == x.name) {
             location = index;
@@ -69,7 +69,7 @@ int get_location(const Vertex& x, const GraphImpl& gp) {
 bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, std::map<std::string, int>& color, GraphImpl& gp) {
     int index = get_location(parent, gp);
     // go through neigbhours of parent
-    for (auto &it : gp.G.at(index).second){
+    for (auto const &it : gp.G.at(index).second){
         // if neigbhours haven't been visited
         if(!exists_in(visited, it)){
             visited.emplace_back(it);
@@ -168,7 +168,7 @@ void input_edges(std::istream& in, GraphImpl& gp) {
 void GraphImpl::print_properties(std::ostream& out) {
     out << *this;
     out << "Degree sequence: ";
-    for(auto &it : vertex_degrees)
+    for(auto const &it : vertex_degrees)
         out << it.second << ' ';
     out << '\n';
     out << "The graph is ";
@@ -176,6 +176,29 @@ void GraphImpl::print_properties(std::ostream& out) {
     out << (is_bipartite() ? "bipartite." : "not bipartite.");
     out << (is_planar() ? "planar, " : "not planar, ");
     out << '\n';
+}
+
+void GraphImpl::add_vertex(Vertex v) {
+    if(exists_in(V, v)) return;
+    V.emplace_back(v);
+    std::vector<Vertex> neighbours;
+    std::pair<Vertex, std::vector<Vertex>> p(v, neighbours);
+    G.emplace_back(p);
+
+}
+
+void GraphImpl::delete_vertex(Vertex v) {
+    int loc = get_location(v, *this);
+    if(loc == -1) return;
+    // go through the edge set and remove associated edges
+    // return E.size everytime as it may change after deletion of edge
+    for(int i = 0; i < int(E.size()); ++i) {
+        if(E.at(i).end1 == v || E.at(i).end2 == v)
+            E.erase(E.begin() + i);
+    }
+    G.erase(G.begin() + loc);
+    V.erase(V.begin() + loc);
+
 }
 
 void GraphImpl::add_edge(Edge e) {
@@ -220,6 +243,26 @@ void GraphImpl::add_edge(Edge e) {
     }
 }
 
+void GraphImpl::delete_edge(Edge e) {
+    int end1_location = get_location(e.end1, *this);
+    int end2_location = get_location(e.end2, *this);
+    // remove from edge set
+    for(int i = 0; i < E.size(); ++i) {
+        if(E.at(i) == e) {
+            E.erase(E.begin() + i);
+            break;
+        }
+    }
+    // remove from AL
+    for(auto &it : G.at(end1_location).second) {
+        if(it == e.end2) {
+            
+        }
+    }
+    
+    
+}
+
 std::vector<std::string> GraphImpl::shortest_path(Vertex v1, Vertex v2) {
     
 }
@@ -227,7 +270,7 @@ std::vector<std::string> GraphImpl::shortest_path(Vertex v1, Vertex v2) {
 // find if there is a path from x to y, assuming that both x and y exist in the graph
 bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visited) {
     // search in neighbours of x
-    for(auto &it : G.at(x_location).second) {
+    for(auto const &it : G.at(x_location).second) {
         // if vertex hasn't already been visited
         if(!exists_in(visited, it)) {
             if(it == y) return true;
@@ -247,7 +290,7 @@ bool GraphImpl::is_path(Vertex x, Vertex y) {
         visited.emplace_back(x);
         #ifdef DEBUG
             std::cout << "visited so far:";
-            for(auto &it : visited) std::cout << ' ' << it.name;
+            for(auto const &it : visited) std::cout << ' ' << it.name;
             std::cout << "\nFinding path from " << x << " to " << y << '\n';
         #endif
         return path_exists(x_location, y, visited);

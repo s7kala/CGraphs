@@ -27,7 +27,10 @@ struct GraphImpl {
     bool is_connected();
     bool is_path(Vertex v1, Vertex v2);
     void print_properties(std::ostream&);
+    void add_vertex(Vertex v);
+    void delete_vertex(Vertex v);
     void add_edge(Edge e);
+    void delete_edge(Edge e);
     std::vector<std::string> shortest_path(Vertex v1, Vertex v2);
 private:
     bool path_exists(int x_location, Vertex y, std::vector<Vertex>& visited);
