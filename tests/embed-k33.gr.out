@@ -1,5 +1,0 @@
-Enter the vertices/edges in the graph(one per line)
-V(G) = {1, 4, 5, 2, 6, 3, 7, 8, 9}
-E(G) = {(1, 4), (1, 5), (2, 4), (2, 6), (3, 7), (7, 4), (3, 5), (3, 6), (2, 7), (7, 5), (1, 8), (8, 9), (9, 6)}
-The vertices 4 and 7 are of the same color
-Not bipartite
