@@ -8,7 +8,7 @@ struct Vertex {
     int degree;
     // add neighbours list?
     Vertex(std::string n = "", int deg = 0);
-    bool operator==(const Vertex& v);
+    bool operator==(const Vertex& v) const;
 };
 
 std::istream& operator>>(std::istream&, Vertex&);

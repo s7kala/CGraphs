@@ -25,15 +25,15 @@ struct GraphImpl {
     bool is_bipartite();
     bool is_planar();
     bool is_connected();
-    bool is_path(Vertex v1, Vertex v2);
+    bool is_path(const Vertex& v1, const Vertex& v2);
     void print_properties(std::ostream&);
-    void add_vertex(Vertex v);
-    void delete_vertex(Vertex v);
-    void add_edge(Edge e);
-    void delete_edge(Edge e);
-    std::vector<std::string> shortest_path(Vertex v1, Vertex v2);
+    void add_vertex(const Vertex& v);
+    void delete_vertex(const Vertex& v);
+    void add_edge(const Edge& e);
+    void delete_edge(const Edge& e);
+    std::vector<std::string> shortest_path(const Vertex& v1, const Vertex& v2);
 private:
-    bool path_exists(int x_location, Vertex y, std::vector<Vertex>& visited);
+    bool path_exists(int x_location, const Vertex& y, std::vector<Vertex>& visited);
     void set_planar();
     void set_bipartite();
     void set_connected();

@@ -66,7 +66,7 @@ int get_location(const Vertex& x, const GraphImpl& gp) {
 // TO-DO
 // if graph is bipartite, set bipartite to 1, else to 0
 // assume G is non-empty
-bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, std::map<std::string, int>& color, GraphImpl& gp) {
+bool color_bipartite(const Vertex& parent, std::vector<Vertex>& visited, std::map<std::string, int>& color, const GraphImpl& gp) {
     int index = get_location(parent, gp);
     // go through neigbhours of parent
     for (auto const &it : gp.G.at(index).second){
@@ -149,7 +149,7 @@ void input_edges(std::istream& in, GraphImpl& gp) {
             Edge e(vertex_1, vertex_2);
             // if edge doesn't exist
             if(!exists_in(gp.E, e))
-                gp.add_edge(e);
+                gp.add_edge(e); 
         }
         // if input is a vertex not already in the graph
         if(vertex_1.name != "" && !exists_in(gp.V, vertex_1)) {
@@ -178,7 +178,7 @@ void GraphImpl::print_properties(std::ostream& out) {
     out << '\n';
 }
 
-void GraphImpl::add_vertex(Vertex v) {
+void GraphImpl::add_vertex(const Vertex& v) {
     if(exists_in(V, v)) return;
     V.emplace_back(v);
     std::vector<Vertex> neighbours;
@@ -187,7 +187,7 @@ void GraphImpl::add_vertex(Vertex v) {
 
 }
 
-void GraphImpl::delete_vertex(Vertex v) {
+void GraphImpl::delete_vertex(const Vertex& v) {
     int loc = get_location(v, *this);
     if(loc == -1) return;
     // go through the edge set and remove associated edges
@@ -201,7 +201,7 @@ void GraphImpl::delete_vertex(Vertex v) {
 
 }
 
-void GraphImpl::add_edge(Edge e) {
+void GraphImpl::add_edge(const Edge& e) {
     E.emplace_back(e);
     Vertex vertex_1 = e.end1, vertex_2 = e.end2;
     bool vertex_1_exists = exists_in(V, vertex_1);
@@ -243,11 +243,11 @@ void GraphImpl::add_edge(Edge e) {
     }
 }
 
-void GraphImpl::delete_edge(Edge e) {
+void GraphImpl::delete_edge(const Edge& e) {
     int end1_location = get_location(e.end1, *this);
     int end2_location = get_location(e.end2, *this);
     // remove from edge set
-    for(int i = 0; i < E.size(); ++i) {
+    for(int i = 0; i < int(E.size()); ++i) {
         if(E.at(i) == e) {
             E.erase(E.begin() + i);
             break;
@@ -263,12 +263,12 @@ void GraphImpl::delete_edge(Edge e) {
     
 }
 
-std::vector<std::string> GraphImpl::shortest_path(Vertex v1, Vertex v2) {
+std::vector<std::string> GraphImpl::shortest_path(const Vertex& v1, const Vertex& v2) {
     
 }
 
 // find if there is a path from x to y, assuming that both x and y exist in the graph
-bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visited) {
+bool GraphImpl::path_exists(int x_location, const Vertex& y, std::vector<Vertex>& visited) {
     // search in neighbours of x
     for(auto const &it : G.at(x_location).second) {
         // if vertex hasn't already been visited
@@ -282,7 +282,7 @@ bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visit
     return false;
 }
 
-bool GraphImpl::is_path(Vertex x, Vertex y) {
+bool GraphImpl::is_path(const Vertex& x, const Vertex& y) {
     int x_location = get_location(x, *this);
     int y_location = get_location(y, *this);
     if(x_location != -1 && y_location != -1) {  // both vertices exist in the graph

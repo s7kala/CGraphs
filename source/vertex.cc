@@ -2,7 +2,7 @@
 
 Vertex::Vertex(std::string n, int deg): name{n}, degree{deg} {}
 
-bool Vertex::operator==(const Vertex& v) { 
+bool Vertex::operator==(const Vertex& v) const { 
     return (name == v.name); 
 }
 

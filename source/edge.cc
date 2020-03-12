@@ -2,7 +2,7 @@
 
 Edge::Edge(Vertex v1, Vertex v2): end1{v1}, end2{v2} {}
 
-bool Edge::operator==(const Edge& e) {
+bool Edge::operator==(const Edge& e) const{
         return ((end1 == e.end1 && end2 == e.end2) || 
                 (end1 == e.end2 && end2 == e.end1));
     }
