@@ -121,7 +121,6 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
             }
             vertex.degree = degree;
             vertex_set.emplace_back(vertex);
-            gp.vertex_degrees.insert({vertex, degree});
             std::pair<Vertex, std::vector<Vertex>> p(vertex, row);
             gp.G.emplace_back(p); 
         } 
@@ -159,17 +158,12 @@ void input_edges(std::istream& in, GraphImpl& gp) {
             gp.G.emplace_back(p1);
         }
     }
-    // create degree sequence
-    for(auto &it : gp.V) gp.vertex_degrees.insert({it, it.degree});
 }
 
 // ######################################## METHODS ######################################## //
 
 void GraphImpl::print_properties(std::ostream& out) {
     out << *this;
-    out << "Degree sequence: ";
-    for(auto const &it : vertex_degrees)
-        out << it.second << ' ';
     out << '\n';
     out << "The graph is ";
     out << (is_connected() ? "connected, " : "not connected, ");
@@ -184,7 +178,6 @@ void GraphImpl::add_vertex(const Vertex& v) {
     std::vector<Vertex> neighbours;
     std::pair<Vertex, std::vector<Vertex>> p(v, neighbours);
     G.emplace_back(p);
-
 }
 
 void GraphImpl::delete_vertex(const Vertex& v) {
@@ -198,7 +191,6 @@ void GraphImpl::delete_vertex(const Vertex& v) {
     }
     G.erase(G.begin() + loc);
     V.erase(V.begin() + loc);
-
 }
 
 void GraphImpl::add_edge(const Edge& e) {
@@ -254,12 +246,22 @@ void GraphImpl::delete_edge(const Edge& e) {
         }
     }
     // remove from AL
-    for(auto &it : G.at(end1_location).second) {
-        if(it == e.end2) {
-            
+    auto& end1_neighbours = G.at(end1_location).second;
+    auto& end2_neighbours = G.at(end2_location).second;
+    // remove end2 from end1's neighbours
+    for(int i = 0; i < int(end1_neighbours.size()); ++i) {
+        if(end1_neighbours.at(i) == e.end2) {
+            end1_neighbours.erase(end1_neighbours.begin() + i);
+            break;
         }
     }
-    
+    // remove end1 from end2's neighbours
+    for(int i = 0; i < int(end2_neighbours.size()); ++i) {
+        if(end2_neighbours.at(i) == e.end1) {
+            end2_neighbours.erase(end2_neighbours.begin() + i);
+            break;
+        }
+    }
     
 }
 

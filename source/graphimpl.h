@@ -16,7 +16,6 @@ struct GraphImpl {
     std::vector<std::pair<Vertex, std::vector<Vertex>>> G;
     std::vector<Vertex> V;              // vertex set
     std::vector<Edge> E;                // edge set
-    std::map<Vertex, int> vertex_degrees;
     std::vector<Vertex> min_cover;
     std::vector<Edge> max_matching;
     // -1 for not set, 0 for false, 1 for true
