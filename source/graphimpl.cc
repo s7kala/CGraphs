@@ -262,7 +262,6 @@ void GraphImpl::delete_edge(const Edge& e) {
             break;
         }
     }
-    
 }
 
 std::vector<std::string> GraphImpl::shortest_path(const Vertex& v1, const Vertex& v2) {
@@ -323,7 +322,8 @@ void GraphImpl::set_connected() {
     }
 }
 
-void GraphImpl::set_bipartite() {
+void GraphImpl::
+set_bipartite() {
     if(G.size() == 0) bipartite = 1;
     else {
         std::vector<Vertex> visited;

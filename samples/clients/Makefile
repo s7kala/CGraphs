@@ -8,7 +8,7 @@ EXEC = client
 EXEC_G = ${EXEC}_g
 EXEC_SPEED = ${EXEC}_speed
 OBJECTS = test_client.o
-LIB = graph.o graphimpl.o vertex.o edge.o
+LIB = graph.o graphimpl.o vertex.o edge.o planar.o traversal.o
 LIB_G = ${LIB}
 LIB_PATH = ../../source/
 CLIENT_PATH = ${PWD}
@@ -37,10 +37,10 @@ ${EXEC_G}: LIB_DEBUG ${OBJECTS}
 
 -include ${DEPENDS}
 
-.PHONY: clean rmlib
+.PHONY: clean clean_all
 
 clean:
 	-rm -f ${EXEC} ${EXEC_G} ${EXEC_SPEED} ${OBJECTS} ${OBJECTS_SPEED} *.d
-rmlib:
-	-rm -f ${LIB}
+clean_all:
+	-rm -f *.o *d
 	
