@@ -16,3 +16,5 @@ std::istream& operator>>(std::istream& in, Edge& e) {
     in >> e.end1 >> e.end2;
     return in;
 }
+
+

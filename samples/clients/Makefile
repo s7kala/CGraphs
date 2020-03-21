@@ -42,5 +42,5 @@ ${EXEC_G}: LIB_DEBUG ${OBJECTS}
 clean:
 	-rm -f ${EXEC} ${EXEC_G} ${EXEC_SPEED} ${OBJECTS} ${OBJECTS_SPEED} *.d
 clean_all:
-	-rm -f *.o *d
+	-rm -f *.o *d ${EXEC} ${EXEC_G}
 	
