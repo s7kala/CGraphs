@@ -11,7 +11,7 @@ OBJECTS = test_client.o
 LIB = graph.o graphimpl.o vertex.o edge.o planar.o traversal.o
 LIB_G = ${LIB}
 LIB_PATH = ../../source/
-CLIENT_PATH = ${PWD}
+CLIENT_PATH = $(shell pwd)
 OBJECTS_SPEED = speed_client.o
 DEPENDS = ${OBJECTS:.o=.d}
 
@@ -19,9 +19,10 @@ ${EXEC}: ${LIB} ${OBJECTS}
 	${CXX} ${CXXFLAGS} ${OBJECTS} ${LIB} -o ${EXEC}
 # TO-DO
 ${LIB}:
-	cd ${LIB_PATH} && make && mv *.o ${CLIENT_PATH} && make clean
+	echo ${CLIENT_PATH}
+	cd ${LIB_PATH} && make && mv ${LIB} ${CLIENT_PATH} && make clean
 LIB_DEBUG:
-	cd ${LIB_PATH} && make debug && mv *.o ${CLIENT_PATH} && make clean
+	cd ${LIB_PATH} && make debug && mv ${LIB} ${CLIENT_PATH} && make clean
 
 debug: CXXFLAGS += -DDEBUG -g
 

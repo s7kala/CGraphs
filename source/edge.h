@@ -8,7 +8,7 @@ struct Edge {
     Vertex end1, end2;
     int weight;
     Edge(Vertex v1, Vertex v2);
-    bool operator==(const Edge& e) const;
+    bool operator==(const Edge& e) const; 
 };
 /*
 struct Unweighted_Edge : public Edge {
