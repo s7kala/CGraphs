@@ -19,7 +19,6 @@ ${EXEC}: ${LIB} ${OBJECTS}
 	${CXX} ${CXXFLAGS} ${OBJECTS} ${LIB} -o ${EXEC}
 # TO-DO
 ${LIB}:
-	echo ${CLIENT_PATH}
 	cd ${LIB_PATH} && make && mv ${LIB} ${CLIENT_PATH} && make clean
 LIB_DEBUG:
 	cd ${LIB_PATH} && make debug && mv ${LIB} ${CLIENT_PATH} && make clean
