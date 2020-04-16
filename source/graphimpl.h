@@ -20,6 +20,7 @@ struct GraphImpl {
     std::vector<Edge> max_matching;
     // -1 for not set, 0 for false, 1 for true
     int planar = -1, bipartite = -1, connected = -1, has_perfect_matching = -1;
+    bool weighted = false;
     // methods
     bool is_bipartite();
     bool is_planar();

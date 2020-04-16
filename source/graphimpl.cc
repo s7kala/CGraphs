@@ -141,11 +141,13 @@ void input_edges(std::istream& in, GraphImpl& gp) {
     std::string line;
     while(getline(in, line)) {
         Vertex vertex_1, vertex_2;
+        int weight = 0;
         std::stringstream ss(line);
-        ss >> vertex_1 >> vertex_2;
+        ss >> vertex_1 >> vertex_2 >> weight;
+        if(weight) gp.weighted = true;
         // if input is an edge
         if(vertex_1.name != "" && vertex_2.name != "") {
-            Edge e(vertex_1, vertex_2);
+            Edge e(vertex_1, vertex_2, weight);
             // if edge doesn't exist
             if(!exists_in(gp.E, e))
                 gp.add_edge(e); 
@@ -265,7 +267,10 @@ void GraphImpl::delete_edge(const Edge& e) {
 }
 
 std::vector<std::string> GraphImpl::shortest_path(const Vertex& v1, const Vertex& v2) {
-    
+    std::vector<std::string> path;
+    if(weighted) weighted_shortest_path(*this, v1, v2, path);
+    else unweighted_shortest_path(*this, v1, v2, path);
+    return path;
 }
 
 // find if there is a path from x to y, assuming that both x and y exist in the graph
@@ -322,8 +327,7 @@ void GraphImpl::set_connected() {
     }
 }
 
-void GraphImpl::
-set_bipartite() {
+void GraphImpl::set_bipartite() {
     if(G.size() == 0) bipartite = 1;
     else {
         std::vector<Vertex> visited;
