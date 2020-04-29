@@ -1,4 +1,5 @@
 #include "graphimpl.h"
+#include "traversal.h"
 // #include "exception.h"
 
 #include <iostream>
@@ -66,13 +67,13 @@ int get_location(const Vertex& x, const GraphImpl& gp) {
 // TO-DO
 // if graph is bipartite, set bipartite to 1, else to 0
 // assume G is non-empty
-bool color_bipartite(const Vertex& parent, std::vector<Vertex>& visited, std::map<std::string, int>& color, const GraphImpl& gp) {
+bool color_bipartite(const Vertex& parent, std::map<Vertex, bool>& visited, std::map<std::string, int>& color, const GraphImpl& gp) {
     int index = get_location(parent, gp);
     // go through neigbhours of parent
     for (auto const &it : gp.G.at(index).second){
         // if neigbhours haven't been visited
-        if(!exists_in(visited, it)){
-            visited.emplace_back(it);
+        if(!visited[it]) {
+            visited[it] = true;
             color[it.name] = !color[parent.name];
             if(!color_bipartite(it, visited, color, gp)) return false;
         }
@@ -267,9 +268,11 @@ void GraphImpl::delete_edge(const Edge& e) {
 }
 
 std::vector<std::string> GraphImpl::shortest_path(const Vertex& v1, const Vertex& v2) {
+    std::vector<Vertex> vertex_path;
+    if(weighted) weighted_shortest_path(*this, v1, v2, vertex_path);
+    else unweighted_shortest_path(*this, v1, v2, vertex_path);
     std::vector<std::string> path;
-    if(weighted) weighted_shortest_path(*this, v1, v2, path);
-    else unweighted_shortest_path(*this, v1, v2, path);
+    for(auto it : vertex_path) path.emplace_back(it.name);
     return path;
 }
 
@@ -330,11 +333,11 @@ void GraphImpl::set_connected() {
 void GraphImpl::set_bipartite() {
     if(G.size() == 0) bipartite = 1;
     else {
-        std::vector<Vertex> visited;
+        std::map<Vertex, bool> visited;
         std::map<std::string, int> color;
         Vertex parent = G.at(0).first;
         color[parent.name] = 0;
-        visited.emplace_back(parent);
+        visited[parent] = true;
         if(color_bipartite(G.at(0).first, visited, color, *this)) bipartite = 1;
         else bipartite = 0;
     }

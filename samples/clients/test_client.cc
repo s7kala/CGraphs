@@ -13,14 +13,22 @@ int main(int argc, char* argv[]) {
         options += o + " ";
     }
     bool test_connected = false, test_bipartite = false;
-    bool test_planarity = false;
-    
+    bool test_planarity = false, test_shortest = false;
+    std::string source, dest;
     std::stringstream ss(options);
     while(ss >> flag) {
         std::string test = flag.substr(1);
         if(test == "connected") test_connected = true;
         else if(test == "bipartite") test_bipartite = true;
         else if(test == "planar") test_planarity = true;
+        else if(test == "shortest"){ 
+            test_shortest = true;
+            std::cout << "SHORTEST PATH TEST\n";
+            std::cout << "Enter source vertex:\n";
+            std::cin >> source;
+            std::cout << "Enter dest vertex:\n";
+            std::cin >> dest;
+        }
         else std::cout << "Unknown command line option: " << flag << std::endl;
     }
     Graph g;
@@ -39,5 +47,14 @@ int main(int argc, char* argv[]) {
         std::cout << (g.is_bipartite() ? "Bipartite" : "Not bipartite") << std::endl;
     if(test_planarity)
         std::cout << (g.is_planar() ? "Planar" : "Not planar") << std::endl;
-    
+    if(test_shortest) {
+        auto sp = g.shortest_path(source, dest);
+        if(sp.empty()) std::cout << "No path found!\n";
+        else {
+            std::cout << "The shortest path is: ";
+            for(auto it : sp)
+               std::cout << it << ' ';
+            std::cout << endl;
+        }
+    }
 }
