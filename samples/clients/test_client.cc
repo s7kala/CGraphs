@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
             std::cout << "The shortest path is: ";
             for(auto it : sp)
                std::cout << it << ' ';
-            std::cout << endl;
+            std::cout << std::endl;
         }
     }
 }
