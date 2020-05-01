@@ -6,8 +6,8 @@
 
 struct Edge {
     Vertex end1, end2;
-    int weight = 0;
-    Edge(Vertex v1, Vertex v2, int weight = 0);
+    double weight = 0;
+    Edge(Vertex v1, Vertex v2, double weight = 0);
     bool operator==(const Edge& e) const; 
 };
 

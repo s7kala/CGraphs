@@ -142,7 +142,7 @@ void input_edges(std::istream& in, GraphImpl& gp) {
     std::string line;
     while(getline(in, line)) {
         Vertex vertex_1, vertex_2;
-        int weight = 0;
+        double weight = 0;
         std::stringstream ss(line);
         ss >> vertex_1 >> vertex_2 >> weight;
         if(weight) gp.weighted = true;

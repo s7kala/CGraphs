@@ -1,6 +1,13 @@
 #include "traversal.h"
 #include <queue>
 
+void dfs(const GraphImpl& gp, const Vertex& v1, const Vertex& v2) {
+
+}
+
+void bfs(const GraphImpl& gp, const Vertex& v1, const Vertex& v2) {
+    
+}
 
 void weighted_shortest_path(const GraphImpl& gp, const Vertex& v1, const Vertex& v2, std::vector<Vertex>& path) {
 
