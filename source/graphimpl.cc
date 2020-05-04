@@ -1,4 +1,5 @@
 #include "graphimpl.h"
+#include "traversal.h"
 // #include "exception.h"
 
 #include <iostream>
@@ -25,9 +26,9 @@ std::ostream& operator<<(std::ostream& out, const GraphImpl& gp) {
     #ifdef DEBUG
     // print out adjacency list
         out << "Adjacency list:\n";
-        for(auto &it : gp.G) {
+        for(auto const &it : gp.G) {
             out << it.first << ":";
-            for(auto &nb : it.second) {
+            for(auto const &nb : it.second) {
                 out << " " << nb; 
             }
             out << '\n';
@@ -37,8 +38,8 @@ std::ostream& operator<<(std::ostream& out, const GraphImpl& gp) {
 }
 
 std::istream& operator>>(std::istream& in, GraphImpl& gp) {
-    //input_adjacency_list(in, gp);
-    // input edges/vertex
+    // uncomment the line below to use adjacency list for input
+    // input_adjacency_list(in, gp);
     input_edges(in, gp);
     return in;
 }
@@ -53,7 +54,7 @@ bool exists_in(std::vector<T> list, T t) {
 // return index of a vertex in the graph
 int get_location(const Vertex& x, const GraphImpl& gp) {
     int location = -1, index = 0;
-    for(auto &it : gp.G) {
+    for(auto const &it : gp.G) {
         ++index;
         if(it.first.name == x.name) {
             location = index;
@@ -66,13 +67,13 @@ int get_location(const Vertex& x, const GraphImpl& gp) {
 // TO-DO
 // if graph is bipartite, set bipartite to 1, else to 0
 // assume G is non-empty
-bool color_bipartite(Vertex& parent, std::vector<Vertex>& visited, std::map<std::string, int>& color, GraphImpl& gp) {
+bool color_bipartite(const Vertex& parent, std::map<Vertex, bool>& visited, std::map<std::string, int>& color, const GraphImpl& gp) {
     int index = get_location(parent, gp);
     // go through neigbhours of parent
-    for (auto &it : gp.G.at(index).second){
+    for (auto const &it : gp.G.at(index).second){
         // if neigbhours haven't been visited
-        if(!exists_in(visited, it)){
-            visited.emplace_back(it);
+        if(!visited[it]) {
+            visited[it] = true;
             color[it.name] = !color[parent.name];
             if(!color_bipartite(it, visited, color, gp)) return false;
         }
@@ -121,7 +122,6 @@ void input_adjacency_list(std::istream& in, GraphImpl& gp) {
             }
             vertex.degree = degree;
             vertex_set.emplace_back(vertex);
-            gp.vertex_degrees.insert({vertex, degree});
             std::pair<Vertex, std::vector<Vertex>> p(vertex, row);
             gp.G.emplace_back(p); 
         } 
@@ -142,14 +142,16 @@ void input_edges(std::istream& in, GraphImpl& gp) {
     std::string line;
     while(getline(in, line)) {
         Vertex vertex_1, vertex_2;
+        double weight = 0;
         std::stringstream ss(line);
-        ss >> vertex_1 >> vertex_2;
+        ss >> vertex_1 >> vertex_2 >> weight;
+        if(weight) gp.weighted = true;
         // if input is an edge
         if(vertex_1.name != "" && vertex_2.name != "") {
-            Edge e(vertex_1, vertex_2);
+            Edge e(vertex_1, vertex_2, weight);
             // if edge doesn't exist
             if(!exists_in(gp.E, e))
-                gp.add_edge(e);
+                gp.add_edge(e); 
         }
         // if input is a vertex not already in the graph
         if(vertex_1.name != "" && !exists_in(gp.V, vertex_1)) {
@@ -159,17 +161,12 @@ void input_edges(std::istream& in, GraphImpl& gp) {
             gp.G.emplace_back(p1);
         }
     }
-    // create degree sequence
-    for(auto &it : gp.V) gp.vertex_degrees.insert({it, it.degree});
 }
 
 // ######################################## METHODS ######################################## //
 
 void GraphImpl::print_properties(std::ostream& out) {
     out << *this;
-    out << "Degree sequence: ";
-    for(auto &it : vertex_degrees)
-        out << it.second << ' ';
     out << '\n';
     out << "The graph is ";
     out << (is_connected() ? "connected, " : "not connected, ");
@@ -178,9 +175,30 @@ void GraphImpl::print_properties(std::ostream& out) {
     out << '\n';
 }
 
-void GraphImpl::add_edge(Edge e) {
+void GraphImpl::add_vertex(const Vertex& v) {
+    if(exists_in(V, v)) return;
+    V.emplace_back(v);
+    std::vector<Vertex> neighbours;
+    std::pair<Vertex, std::vector<Vertex>> p(v, neighbours);
+    G.emplace_back(p);
+}
+
+void GraphImpl::delete_vertex(const Vertex& v) {
+    int loc = get_location(v, *this);
+    if(loc == -1) return;
+    // go through the edge set and remove associated edges
+    // return E.size everytime as it may change after deletion of edge
+    for(int i = 0; i < int(E.size()); ++i) {
+        if(E.at(i).end1 == v || E.at(i).end2 == v)
+            E.erase(E.begin() + i);
+    }
+    G.erase(G.begin() + loc);
+    V.erase(V.begin() + loc);
+}
+
+void GraphImpl::add_edge(const Edge& e) {
     E.emplace_back(e);
-    Vertex vertex_1 = e.edge.first, vertex_2 = e.edge.second;
+    Vertex vertex_1 = e.end1, vertex_2 = e.end2;
     bool vertex_1_exists = exists_in(V, vertex_1);
     bool vertex_2_exists = exists_in(V, vertex_2);
     // if both vertices don't exist
@@ -220,10 +238,48 @@ void GraphImpl::add_edge(Edge e) {
     }
 }
 
+void GraphImpl::delete_edge(const Edge& e) {
+    int end1_location = get_location(e.end1, *this);
+    int end2_location = get_location(e.end2, *this);
+    // remove from edge set
+    for(int i = 0; i < int(E.size()); ++i) {
+        if(E.at(i) == e) {
+            E.erase(E.begin() + i);
+            break;
+        }
+    }
+    // remove from AL
+    auto& end1_neighbours = G.at(end1_location).second;
+    auto& end2_neighbours = G.at(end2_location).second;
+    // remove end2 from end1's neighbours
+    for(int i = 0; i < int(end1_neighbours.size()); ++i) {
+        if(end1_neighbours.at(i) == e.end2) {
+            end1_neighbours.erase(end1_neighbours.begin() + i);
+            break;
+        }
+    }
+    // remove end1 from end2's neighbours
+    for(int i = 0; i < int(end2_neighbours.size()); ++i) {
+        if(end2_neighbours.at(i) == e.end1) {
+            end2_neighbours.erase(end2_neighbours.begin() + i);
+            break;
+        }
+    }
+}
+
+std::vector<std::string> GraphImpl::shortest_path(const Vertex& v1, const Vertex& v2) {
+    std::vector<Vertex> vertex_path;
+    if(weighted) weighted_shortest_path(*this, v1, v2, vertex_path);
+    else unweighted_shortest_path(*this, v1, v2, vertex_path);
+    std::vector<std::string> path;
+    for(auto it : vertex_path) path.emplace_back(it.name);
+    return path;
+}
+
 // find if there is a path from x to y, assuming that both x and y exist in the graph
-bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visited) {
+bool GraphImpl::path_exists(int x_location, const Vertex& y, std::vector<Vertex>& visited) {
     // search in neighbours of x
-    for(auto &it : G.at(x_location).second) {
+    for(auto const &it : G.at(x_location).second) {
         // if vertex hasn't already been visited
         if(!exists_in(visited, it)) {
             if(it == y) return true;
@@ -235,7 +291,7 @@ bool GraphImpl::path_exists(int x_location, Vertex y, std::vector<Vertex>& visit
     return false;
 }
 
-bool GraphImpl::is_path(Vertex x, Vertex y) {
+bool GraphImpl::is_path(const Vertex& x, const Vertex& y) {
     int x_location = get_location(x, *this);
     int y_location = get_location(y, *this);
     if(x_location != -1 && y_location != -1) {  // both vertices exist in the graph
@@ -243,7 +299,7 @@ bool GraphImpl::is_path(Vertex x, Vertex y) {
         visited.emplace_back(x);
         #ifdef DEBUG
             std::cout << "visited so far:";
-            for(auto &it : visited) std::cout << ' ' << it.name;
+            for(auto const &it : visited) std::cout << ' ' << it.name;
             std::cout << "\nFinding path from " << x << " to " << y << '\n';
         #endif
         return path_exists(x_location, y, visited);
@@ -277,11 +333,11 @@ void GraphImpl::set_connected() {
 void GraphImpl::set_bipartite() {
     if(G.size() == 0) bipartite = 1;
     else {
-        std::vector<Vertex> visited;
+        std::map<Vertex, bool> visited;
         std::map<std::string, int> color;
         Vertex parent = G.at(0).first;
         color[parent.name] = 0;
-        visited.emplace_back(parent);
+        visited[parent] = true;
         if(color_bipartite(G.at(0).first, visited, color, *this)) bipartite = 1;
         else bipartite = 0;
     }
