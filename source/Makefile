@@ -3,7 +3,7 @@
 ##############################################
 
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -MMD
+CXXFLAGS = -std=c++17 -Wall -MMD -O2
 DEBUG_FLAGS = -DDEBUG -g
 OBJECTS = graph.o graphimpl.o vertex.o edge.o planar.o traversal.o
 DEPENDS = ${OBJECTS:.o=.d}

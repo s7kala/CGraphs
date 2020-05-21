@@ -3,7 +3,7 @@
 ################################################
 ## TO-DO ##
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -MMD
+CXXFLAGS = -std=c++17 -Wall -MMD -O2
 EXEC = client
 EXEC_G = ${EXEC}_g
 EXEC_SPEED = ${EXEC}_speed
