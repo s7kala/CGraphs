@@ -276,6 +276,18 @@ std::vector<std::string> GraphImpl::shortest_path(const Vertex& v1, const Vertex
     return path;
 }
 
+std::set<std::vector<std::string>> GraphImpl::all_paths(const Vertex& v1, const Vertex& v2) {
+    std::set<std::vector<Vertex>> ap_vertex;
+    get_all_paths(*this, v1, v2, ap_vertex);
+    std::set<std::vector<std::string>> ap;
+    for(auto it : ap_vertex) {
+        std::vector<std::string> path;
+        for(auto s : it) path.emplace_back(s.name);
+        ap.insert(path);
+    }
+    return ap;
+}
+
 // find if there is a path from x to y, assuming that both x and y exist in the graph
 bool GraphImpl::path_exists(int x_location, const Vertex& y, std::vector<Vertex>& visited) {
     // search in neighbours of x

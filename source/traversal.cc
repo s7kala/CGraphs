@@ -1,5 +1,6 @@
 #include "traversal.h"
 #include <queue>
+#include <algorithm>
 
 void dfs(const GraphImpl& gp, const Vertex& v1, const Vertex& v2) {
 
@@ -39,6 +40,30 @@ void unweighted_shortest_path(const GraphImpl& gp, const Vertex& source, const V
                     path.insert(path.begin(), source);
                     return;
                 }
+            }
+        }
+    }
+}
+
+void get_all_paths(const GraphImpl& gp, const Vertex& source, const Vertex& dest, std::set<std::vector<Vertex>>& paths) {
+    std::queue<std::vector<Vertex>> q;
+    std::vector<Vertex> path;
+    path.emplace_back(source);
+    
+    q.push(path);
+    while(!q.empty()) {
+        path = q.front();
+        q.pop();
+        Vertex end = path.back();
+        if(end == dest) paths.insert(path);
+        int index = get_location(end, gp);
+        // traverse through end's neighbours
+        for(auto u : gp.G.at(index).second) {
+            // if u is not in the path
+            if(find(path.begin(), path.end(), u) == path.end()) {
+                std::vector<Vertex> newPath = path;
+                newPath.emplace_back(u);
+                q.push(newPath);
             }
         }
     }

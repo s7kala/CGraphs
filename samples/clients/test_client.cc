@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
     }
     bool test_connected = false, test_bipartite = false;
     bool test_planarity = false, test_shortest = false;
+    bool test_allpaths = false;
     std::string source, dest;
     std::stringstream ss(options);
     while(ss >> flag) {
@@ -28,6 +29,15 @@ int main(int argc, char* argv[]) {
             std::cin >> source;
             std::cout << "Enter dest vertex:\n";
             std::cin >> dest;
+        } else if(test == "allpaths") {
+            test_allpaths = true;
+            if(!test_shortest) {
+                std::cout << "ALL PATH TEST\n";
+                std::cout << "Enter source vertex:\n";
+                std::cin >> source;
+                std::cout << "Enter dest vertex:\n";
+                std::cin >> dest;
+            }
         }
         else std::cout << "Unknown command line option: " << flag << std::endl;
     }
@@ -55,6 +65,19 @@ int main(int argc, char* argv[]) {
             for(auto it : sp)
                std::cout << it << ' ';
             std::cout << std::endl;
+        }
+    } if(test_allpaths) {
+        auto ap = g.all_paths(source, dest);
+        if(ap.empty()) std::cout << "No path found!\n";
+        else {
+            int i = 1;
+            for(auto it : ap) {
+                std::cout << "Path " << i++ << ":";
+                for(auto s : it) {
+                    std::cout << ' ' << s;
+                }
+                std::cout << '\n';
+            }
         }
     }
 }

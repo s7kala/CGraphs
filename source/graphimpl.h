@@ -9,6 +9,7 @@
 #include <string>
 #include <map>
 #include <utility>
+#include <set>
 
 struct GraphImpl {
     // fields
@@ -32,6 +33,7 @@ struct GraphImpl {
     void add_edge(const Edge& e);
     void delete_edge(const Edge& e);
     std::vector<std::string> shortest_path(const Vertex& v1, const Vertex& v2);
+    std::set<std::vector<std::string>> all_paths(const Vertex& v1, const Vertex& v2);
 private:
     bool path_exists(int x_location, const Vertex& y, std::vector<Vertex>& visited);
     void set_planar();
