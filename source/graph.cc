@@ -47,7 +47,7 @@ std::vector<std::string> Graph::shortest_path(std::string v1, std::string v2) {
     return pImpl->shortest_path(Vertex(v1), Vertex(v2));
 }
 
-std::set<std::vector<std::string>> Graph::all_paths(std::string v1, std::string v2) {
+std::vector<std::vector<std::string>> Graph::all_paths(std::string v1, std::string v2) {
     return pImpl->all_paths(Vertex(v1), Vertex(v2));
 }
 

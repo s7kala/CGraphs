@@ -276,14 +276,14 @@ std::vector<std::string> GraphImpl::shortest_path(const Vertex& v1, const Vertex
     return path;
 }
 
-std::set<std::vector<std::string>> GraphImpl::all_paths(const Vertex& v1, const Vertex& v2) {
-    std::set<std::vector<Vertex>> ap_vertex;
+std::vector<std::vector<std::string>> GraphImpl::all_paths(const Vertex& v1, const Vertex& v2) {
+    std::vector<std::vector<Vertex>> ap_vertex;
     get_all_paths(*this, v1, v2, ap_vertex);
-    std::set<std::vector<std::string>> ap;
+    std::vector<std::vector<std::string>> ap;
     for(auto it : ap_vertex) {
         std::vector<std::string> path;
         for(auto s : it) path.emplace_back(s.name);
-        ap.insert(path);
+        ap.emplace_back(path);
     }
     return ap;
 }

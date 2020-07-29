@@ -24,11 +24,13 @@ int main(int argc, char* argv[]) {
         else if(test == "planar") test_planarity = true;
         else if(test == "shortest"){ 
             test_shortest = true;
-            std::cout << "SHORTEST PATH TEST\n";
-            std::cout << "Enter source vertex:\n";
-            std::cin >> source;
-            std::cout << "Enter dest vertex:\n";
-            std::cin >> dest;
+            if(!test_allpaths) {
+                std::cout << "SHORTEST PATH TEST\n";
+                std::cout << "Enter source vertex:\n";
+                std::cin >> source;
+                std::cout << "Enter dest vertex:\n";
+                std::cin >> dest;
+            }
         } else if(test == "allpaths") {
             test_allpaths = true;
             if(!test_shortest) {

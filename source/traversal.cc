@@ -10,12 +10,14 @@ void bfs(const GraphImpl& gp, const Vertex& v1, const Vertex& v2) {
     
 }
 
-void weighted_shortest_path(const GraphImpl& gp, const Vertex& v1, const Vertex& v2, std::vector<Vertex>& path) {
+void weighted_shortest_path(const GraphImpl& gp, const Vertex& v1, 
+        const Vertex& v2, std::vector<Vertex>& path) {
 
 }
 
 
-void unweighted_shortest_path(const GraphImpl& gp, const Vertex& source, const Vertex& dest, std::vector<Vertex>& path) {
+void unweighted_shortest_path(const GraphImpl& gp, const Vertex& source, 
+        const Vertex& dest, std::vector<Vertex>& path) {
     std::map<Vertex, bool> visited;
     std::queue<Vertex> q;
     std::map<Vertex, int> distance;
@@ -45,7 +47,8 @@ void unweighted_shortest_path(const GraphImpl& gp, const Vertex& source, const V
     }
 }
 
-void get_all_paths(const GraphImpl& gp, const Vertex& source, const Vertex& dest, std::set<std::vector<Vertex>>& paths) {
+void get_all_paths(const GraphImpl& gp, const Vertex& source, const Vertex& dest, 
+        std::vector<std::vector<Vertex>>& paths) {
     std::queue<std::vector<Vertex>> q;
     std::vector<Vertex> path;
     path.emplace_back(source);
@@ -55,7 +58,7 @@ void get_all_paths(const GraphImpl& gp, const Vertex& source, const Vertex& dest
         path = q.front();
         q.pop();
         Vertex end = path.back();
-        if(end == dest) paths.insert(path);
+        if(end == dest) paths.emplace_back(path);
         int index = get_location(end, gp);
         // traverse through end's neighbours
         for(auto u : gp.G.at(index).second) {
